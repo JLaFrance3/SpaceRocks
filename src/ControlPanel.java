@@ -29,6 +29,11 @@ public class ControlPanel extends JPanel{
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.addKeyListener(listener);
+        this.addMouseListener(listener);
+        this.addMouseMotionListener(listener);
+        this.setFocusable(true);
+        this.requestFocus();
 
         //Delete later
         this.setBackground(java.awt.Color.green);
@@ -77,9 +82,11 @@ public class ControlPanel extends JPanel{
         public void mouseDragged(MouseEvent e) {
             if(e.getY() < clickPosition.getY()) {
                 input.setInput('w');
+                System.out.println("Up");
             }
             else if(e.getY() > clickPosition.getY()) {
                 input.setInput('s');
+                System.out.println("Down");
             }
 
             clickPosition = e.getPoint();
