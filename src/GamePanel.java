@@ -37,7 +37,7 @@ public class GamePanel extends JPanel{
     }
 
     public void start() {
-
+        running = true;
     }
 
     public void update() {
@@ -53,7 +53,7 @@ public class GamePanel extends JPanel{
     }
 
     public void unpause() {
-
+        
     }
 
     public void paintComponent() {

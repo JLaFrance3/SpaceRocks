@@ -10,17 +10,21 @@ import javax.swing.JFrame;
 public class GameFrame extends JFrame{
     
     private InputHolder input;
+    private GamePanel gPanel;
+    private ControlPanel cPanel;
 
     public GameFrame() {
         super("Space Rocks");
 
         //Initialize
         input = new InputHolder();
+        gPanel = new GamePanel(input);
+        cPanel = new ControlPanel(input);
 
         //Add Panels
         this.setLayout(new BorderLayout());
-        this.add(new GamePanel(input), BorderLayout.CENTER);
-        this.add(new ControlPanel(input), BorderLayout.SOUTH);
+        this.add(gPanel, BorderLayout.CENTER);
+        this.add(cPanel, BorderLayout.SOUTH);
 
         //Frame settings
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -31,6 +35,9 @@ public class GameFrame extends JFrame{
         this.pack();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
+
+        //Start Game
+        gPanel.start();
     }
 
 }
