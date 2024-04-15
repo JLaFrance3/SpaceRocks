@@ -14,6 +14,7 @@ abstract class Entity {
     private int damage;     //Damage
     private int speed;      //Pixels/second?
     private int x, y;       //Position
+    private int dX, dY;     //Velovity
     private int rotation;   //Rotation of sprite
 
     private BufferedImage sprite;   //sprite image
@@ -27,6 +28,9 @@ abstract class Entity {
         speed = 10;
         rotation = 0;
 
+        dX = 0;
+        dY = 0;
+
         this.sprite = sprite;
         this.gp = gp;
 
@@ -39,6 +43,9 @@ abstract class Entity {
         armor = 0;
         damage = 50;
         speed = 10;
+
+        dX = 0;
+        dY = 0;
 
         this.rotation = rotation;
         this.sprite = sprite;
@@ -54,6 +61,9 @@ abstract class Entity {
         damage = 50;
         speed = 10;
 
+        dX = 0;
+        dY = 0;
+
         this.rotation = rotation;
         this.sprite = sprite;
         this.gp = gp;
@@ -61,6 +71,11 @@ abstract class Entity {
         this.x = x;
         this.y = y;
         setLocation(x, y);
+    }
+
+    public void tick() {
+        x+=dX;
+        y+=dY;
     }
 
     //Returns entity health
@@ -91,6 +106,16 @@ abstract class Entity {
     //Returns entity y coordinate
     public int getY() {
         return y;
+    }
+
+    //Returns entity x velocity
+    public int getDX() {
+        return dX;
+    }
+
+    //Returns entity y velocity
+    public int getDY() {
+        return dY;
     }
 
     //Returns entity rotation value
@@ -137,6 +162,16 @@ abstract class Entity {
     //Sets speed
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    //Sets x velocity
+    public void setDX(int dX) {
+        this.dX = dX;
+    }
+
+    //Sets y velocity
+    public void setDY(int dY) {
+        this.dY = dY;
     }
 
     //Paint method allowing for rotation of sprites
