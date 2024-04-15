@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 
 public class GameFrame extends JFrame{
     
-    private PlayerProxy proxy;
+    private InputHolder input;
     private GamePanel gPanel;
     private ControlPanel cPanel;
 
@@ -17,9 +17,9 @@ public class GameFrame extends JFrame{
         super("Space Rocks");
 
         //Initialize
-        proxy = new PlayerProxy();
-        gPanel = new GamePanel(proxy);
-        cPanel = new ControlPanel(proxy);
+        input = new InputHolder();
+        gPanel = new GamePanel(input);
+        cPanel = new ControlPanel(input);
 
         //Add Panels
         this.setLayout(new BorderLayout());

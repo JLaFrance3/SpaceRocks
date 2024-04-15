@@ -24,7 +24,7 @@ public class GamePanel extends JPanel{
     private boolean running = false;
     private Timer timer;
     private Random random;
-    private PlayerProxy proxy;
+    private InputHolder input;
 
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private BufferedImage shipSS;
@@ -33,9 +33,9 @@ public class GamePanel extends JPanel{
     private BufferedImage playerAvatar;
     private Avatar player;
 
-    public GamePanel(PlayerProxy proxy) {
+    public GamePanel(InputHolder input) {
         //Initialize
-        this.proxy = proxy;
+        this.input = input;
         running = false;
         timer = new Timer(DELAY, new ClockListener(this));
         random = new Random();
@@ -59,9 +59,6 @@ public class GamePanel extends JPanel{
         SpriteSheet ss = new SpriteSheet(shipSS, 59, 47);
         playerAvatar = ss.getSprite(1, 1);
         player = new Avatar(playerAvatar, this);
-
-        //Set player proxy
-        proxy.setPlayer(player);
     }
 
     public void start() {
@@ -82,6 +79,14 @@ public class GamePanel extends JPanel{
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            }
+            switch(input.getInput()) {
+                case 'w':
+                    player.moveUp();
+                    break;
+                case 's':
+                    player.moveDown();
+                    break;
             }
             repaint();
         }
