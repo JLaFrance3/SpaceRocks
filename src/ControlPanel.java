@@ -36,7 +36,7 @@ public class ControlPanel extends JPanel{
         this.requestFocus();
 
         //Delete later
-        this.setBackground(java.awt.Color.green);
+        this.setBackground(java.awt.Color.white);
 
     }
 

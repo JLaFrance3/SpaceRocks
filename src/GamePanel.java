@@ -31,6 +31,7 @@ public class GamePanel extends JPanel{
     private SpriteSheet ships;
 
     private BufferedImage playerAvatar;
+    private Avatar player;
 
     public GamePanel(InputHolder in) {
         //Initialize
@@ -57,6 +58,7 @@ public class GamePanel extends JPanel{
 
         SpriteSheet ss = new SpriteSheet(shipSS, 59, 47);
         playerAvatar = ss.getSprite(1, 1);
+        player = new Avatar(playerAvatar, this);
     }
 
     public void start() {
@@ -98,8 +100,12 @@ public class GamePanel extends JPanel{
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
-        g.drawImage(playerAvatar, 0, 0, this);
+       
+        if (player != null) {
+            Graphics2D brush = (Graphics2D)g.create();
+            player.paint(brush);
+            brush.dispose();
+        }
     }
 
     private class ClockListener implements ActionListener {
@@ -113,7 +119,7 @@ public class GamePanel extends JPanel{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(running) {
-                System.out.println("tick");
+                
             }
         }
     }
