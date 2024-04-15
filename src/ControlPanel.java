@@ -49,14 +49,6 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void keyPressed(KeyEvent e) {
-            /*     
-            *      '-' - No input
-            *      'w' - Up
-            *      's' - Down
-            *      'e' - Pause
-            *      ' ' - Shoot
-            */
-
             switch(e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
@@ -92,8 +84,6 @@ public class ControlPanel extends JPanel{
             else if(e.getY() > clickPosition.getY()) {
                 input.setInput('s');
             }
-
-            clickPosition = e.getPoint();
         }
 
         @Override

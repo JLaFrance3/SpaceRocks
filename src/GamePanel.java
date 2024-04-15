@@ -17,7 +17,7 @@ import javax.swing.Timer;
 
 public class GamePanel extends JPanel{
     
-    private static final int DELAY = 100;
+    private static final int DELAY = 50;
     private final int WIDTH = 800;
     private final int HEIGHT = 450;
 
@@ -69,28 +69,20 @@ public class GamePanel extends JPanel{
         running = true;
         timer.start();
         init();
-        run();
     }
 
-    public void run() {
-        while(true) {
-            try {
-                Thread.sleep(75);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            switch(input.getInput()) {
-                case 'w':
-                    player.moveUp();
-                    break;
-                case 's':
-                    player.moveDown();
-                    break;
-            }
-            repaint();
+    public void update() {
+
+        switch(input.getInput()) {
+            case 'w':
+                player.moveUp();
+                break;
+            case 's':
+                player.moveDown();
+                break;
         }
-        
+
+        repaint();
     }
 
     public void end() {
@@ -136,7 +128,7 @@ public class GamePanel extends JPanel{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(running) {
-                
+                update();
             }
         }
     }
