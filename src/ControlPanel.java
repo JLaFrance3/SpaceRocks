@@ -72,7 +72,7 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void keyReleased(KeyEvent e) {
-            //Make sure escape key goes through
+            //Ensure escape key goes through
             if(input.getInput() != 'e') {
                 input.clear();
             }
@@ -97,6 +97,11 @@ public class ControlPanel extends JPanel{
             clickPosition = e.getPoint();
         }
 
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            input.clear();
+        }
+
         //Not implemented
         @Override
         public void mouseClicked(MouseEvent e) {}
@@ -106,9 +111,6 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void mouseMoved(MouseEvent e) {}
-
-        @Override
-        public void mouseReleased(MouseEvent e) {}
 
         @Override
         public void mouseEntered(MouseEvent e) {}
