@@ -33,9 +33,9 @@ public class GamePanel extends JPanel{
     private BufferedImage playerAvatar;
     private Avatar player;
 
-    public GamePanel(InputHolder in) {
+    public GamePanel(InputHolder input) {
         //Initialize
-        this.input = in;
+        this.input = input;
         running = false;
         timer = new Timer(DELAY, new ClockListener(this));
         random = new Random();
@@ -73,7 +73,24 @@ public class GamePanel extends JPanel{
     }
 
     public void run() {
-        repaint();
+        while(true) {
+            try {
+                Thread.sleep(75);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            switch(input.getInput()) {
+                case 'w':
+                    player.moveUp();
+                    break;
+                case 's':
+                    player.moveDown();
+                    break;
+            }
+            repaint();
+        }
+        
     }
 
     public void end() {

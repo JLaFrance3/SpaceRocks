@@ -3,13 +3,14 @@
  * InputHolder
  * Class used to store user input for use in separate frame
  * Input types:
- *      ' ' - No input
+ *      '-' - No input
  *      'w' - Up
  *      's' - Down
  *      'e' - Pause
+ *      ' ' - Shoot
  */
 
-public class InputHolder {
+ public class InputHolder {
     
     private char userInput;
 

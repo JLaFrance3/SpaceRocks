@@ -20,11 +20,9 @@ public class ControlPanel extends JPanel{
     private final int HEIGHT = 150;
 
     private InputListener listener;
-    private InputHolder input;
 
     public ControlPanel(InputHolder input) {
         //Initialize
-        this.input = input;
         listener = new InputListener(input);
 
         //Panel settings
@@ -51,21 +49,29 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void keyPressed(KeyEvent e) {
+            /*     
+            *      '-' - No input
+            *      'w' - Up
+            *      's' - Down
+            *      'e' - Pause
+            *      ' ' - Shoot
+            */
+
             switch(e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
                     input.setInput('w');
-                    System.out.println("Up");
                     break;
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
                     input.setInput('s');
-                    System.out.println("Down");
+                    break;
+                case KeyEvent.VK_SPACE:
+                    input.setInput(' ');
                     break;
                 case KeyEvent.VK_BACK_SPACE:
                 case KeyEvent.VK_ESCAPE:
                     input.setInput('e');
-                    System.out.println("Esc");
                     break;
             }
         }
@@ -82,11 +88,9 @@ public class ControlPanel extends JPanel{
         public void mouseDragged(MouseEvent e) {
             if(e.getY() < clickPosition.getY()) {
                 input.setInput('w');
-                System.out.println("Up");
             }
             else if(e.getY() > clickPosition.getY()) {
                 input.setInput('s');
-                System.out.println("Down");
             }
 
             clickPosition = e.getPoint();
