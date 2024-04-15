@@ -17,7 +17,7 @@ import javax.swing.Timer;
 
 public class GamePanel extends JPanel{
     
-    private static final int DELAY = 50;
+    private static final int DELAY = 17;
     private final int WIDTH = 800;
     private final int HEIGHT = 450;
 
@@ -56,9 +56,9 @@ public class GamePanel extends JPanel{
             e.printStackTrace();
         }
 
-        SpriteSheet ss = new SpriteSheet(shipSS, 59, 47);
-        playerAvatar = ss.getSprite(1, 1);
-        player = new Avatar(playerAvatar, this);
+        ships = new SpriteSheet(shipSS, 59, 47);
+        playerAvatar = ships.getSprite(1, 1);
+        player = new Avatar(playerAvatar, this, input);
     }
 
     public void start() {
@@ -71,15 +71,9 @@ public class GamePanel extends JPanel{
         init();
     }
 
-    public void update() {
-
-        switch(input.getInput()) {
-            case 'w':
-                player.moveUp();
-                break;
-            case 's':
-                player.moveDown();
-                break;
+    public void tick() {
+        if(player != null) {
+            player.tick();
         }
 
         repaint();
@@ -100,10 +94,6 @@ public class GamePanel extends JPanel{
 
     public void unpause() {
         
-    }
-
-    public void tick() {
-
     }
 
     @Override
@@ -128,7 +118,7 @@ public class GamePanel extends JPanel{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(running) {
-                update();
+                tick();
             }
         }
     }
