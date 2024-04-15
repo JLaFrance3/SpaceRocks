@@ -20,12 +20,12 @@ public class ControlPanel extends JPanel{
     private final int HEIGHT = 150;
 
     private InputListener listener;
-    private InputHolder input;
+    private PlayerProxy proxy;
 
-    public ControlPanel(InputHolder input) {
+    public ControlPanel(PlayerProxy proxy) {
         //Initialize
-        this.input = input;
-        listener = new InputListener(input);
+        this.proxy = proxy;
+        listener = new InputListener(proxy);
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -42,51 +42,49 @@ public class ControlPanel extends JPanel{
 
     private class InputListener implements KeyListener, MouseListener, MouseMotionListener {
 
-        private InputHolder input;
+        private PlayerProxy input;
         private Point clickPosition;
 
-        public InputListener(InputHolder input) {
+        public InputListener(PlayerProxy input) {
             this.input = input;
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
+            /*     
+            *      '-' - No input
+            *      'w' - Up
+            *      's' - Down
+            *      'e' - Pause
+            *      ' ' - Shoot
+            */
+
             switch(e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
-                    input.setInput('w');
-                    System.out.println("Up");
+                    proxy.moveUp();
                     break;
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
-                    input.setInput('s');
-                    System.out.println("Down");
+                    proxy.moveDown();
+                    break;
+                case KeyEvent.VK_SPACE:
+                    proxy.shoot();
                     break;
                 case KeyEvent.VK_BACK_SPACE:
                 case KeyEvent.VK_ESCAPE:
-                    input.setInput('e');
-                    System.out.println("Esc");
+                    //TODO: Pause Menu
                     break;
-            }
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            //Ensure escape key goes through
-            if(input.getInput() != 'e') {
-                input.clear();
             }
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
             if(e.getY() < clickPosition.getY()) {
-                input.setInput('w');
-                System.out.println("Up");
+                proxy.moveUp();
             }
             else if(e.getY() > clickPosition.getY()) {
-                input.setInput('s');
-                System.out.println("Down");
+                proxy.moveDown();
             }
 
             clickPosition = e.getPoint();
@@ -97,12 +95,13 @@ public class ControlPanel extends JPanel{
             clickPosition = e.getPoint();
         }
 
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            input.clear();
-        }
-
         //Not implemented
+        @Override
+        public void mouseReleased(MouseEvent e) {}
+
+        @Override
+        public void keyReleased(KeyEvent e) {}
+
         @Override
         public void mouseClicked(MouseEvent e) {}
 

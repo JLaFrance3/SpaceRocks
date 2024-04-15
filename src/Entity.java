@@ -52,7 +52,7 @@ abstract class Entity {
         health = 100;
         armor = 0;
         damage = 50;
-        speed = 10;
+        speed = 2;
 
         this.rotation = rotation;
         this.sprite = sprite;
@@ -151,7 +151,8 @@ abstract class Entity {
 
             brush.rotate(Math.toRadians(rotation), rotateX_Axis, rotateY_Axis);
 
-            brush.drawImage(sprite, x, y, gp);
+            System.out.println(brush.drawImage(sprite, x, y, gp));
+            System.out.println("(" + this.x + ", " + this.y + ")");
 
             brush.rotate(Math.toRadians(-rotation), rotateX_Axis, rotateY_Axis);
         }
