@@ -28,6 +28,14 @@ public class Avatar extends Entity{
                 setDX(-getSpeed());
                 break;
         }
+        
+        //Wall collision
+        if(getX() > 0) {
+            setLocation(0, getY());
+        }
+        if (getX() < -getGP().getHeight() + 40) {
+            setLocation(-getGP().getHeight() + 40, getY());
+        }
 
         super.tick();
 

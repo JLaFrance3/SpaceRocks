@@ -128,6 +128,11 @@ abstract class Entity {
         return sprite;
     }
 
+    //Returns the game panel
+    public GamePanel getGP() {
+        return gp;
+    }
+
     //Sets entity x and y coordinate
     public void setLocation(int x, int y) {
         this.x = x;
