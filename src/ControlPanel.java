@@ -5,21 +5,27 @@
  */
 
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
 public class ControlPanel extends JPanel{
 
     private final int WIDTH = 800;
-    private final int HEIGHT = 150;
+    private final int HEIGHT = 200;
 
     private InputListener listener;
+    private BufferedImage console;
+    
 
     public ControlPanel(InputHolder input) {
         //Initialize
@@ -33,10 +39,28 @@ public class ControlPanel extends JPanel{
         this.setFocusable(true);
         this.requestFocus();
 
-        //Delete later
-        this.setBackground(java.awt.Color.white);
-
     }
+
+    public void init() {
+        BufferedImageLoader loader = new BufferedImageLoader();
+
+        try {
+            console = loader.load("res/Console.png");
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+       
+        Graphics2D brush = (Graphics2D)g.create();
+
+        if(console != null) {
+            g.drawImage(console, 0, 0, null);
+        }
+    }
+    
 
     private class InputListener implements KeyListener, MouseListener, MouseMotionListener {
 

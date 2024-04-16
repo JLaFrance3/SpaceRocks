@@ -48,9 +48,6 @@ public class GamePanel extends JPanel{
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-
-        //Delete later
-        this.setBackground(java.awt.Color.black);
     }
 
     public void init() {

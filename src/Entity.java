@@ -11,7 +11,7 @@ abstract class Entity extends Mover{
     
     private int health;         //Health
     private int armor;          //Damage negation
-    private double fireRate;    //Limit fire rate with multiplier
+    private double fireRate;    //Limit fire rate with increment
     private double fireCount;
 
     private BufferedImage projectileSprite;     //Projectile sprite

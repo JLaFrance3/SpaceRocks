@@ -38,8 +38,8 @@ public class Avatar extends Entity{
         if(getX() > 0) {
             setLocation(0, getY());
         }
-        if (getX() < -getGP().getHeight() + 40) {
-            setLocation(-getGP().getHeight() + 40, getY());
+        if (getX() < -getGP().getHeight() + 190) {
+            setLocation(-getGP().getHeight() + 190, getY());
         }
 
         super.tick();
