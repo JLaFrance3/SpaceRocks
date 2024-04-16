@@ -9,8 +9,10 @@ import java.awt.image.BufferedImage;
 
 abstract class Entity extends Mover{
     
-    private int health;     //Health
-    private int armor;      //Damage negation
+    private int health;         //Health
+    private int armor;          //Damage negation
+    private double fireRate;    //Limit fire rate with multiplier
+    private double fireCount;
 
     private BufferedImage projectileSprite;     //Projectile sprite
 
@@ -20,6 +22,8 @@ abstract class Entity extends Mover{
         
         health = 0;
         armor = 0;
+        fireRate = .1;
+        fireCount = 0;
     }
 
     //Constructor with rotation
@@ -28,6 +32,8 @@ abstract class Entity extends Mover{
         
         health = 100;
         armor = 0;
+        fireRate = .1;
+        fireCount = 0;
     }
 
     //Constructor with position
@@ -36,10 +42,17 @@ abstract class Entity extends Mover{
         
         health = 100;
         armor = 0;
+        fireRate = .1;
+        fireCount = 0;
     }
 
     public void tick() {
         super.tick();
+    }
+
+    //Returns rate of fire multiplier
+    public double getFireRate() {
+        return fireRate;
     }
 
     //Returns entity health
@@ -62,6 +75,11 @@ abstract class Entity extends Mover{
         this.projectileSprite = sprite;
     }
 
+    //Set rate of fire
+    public void setFireRate(double fr) {
+        this.fireRate = fr;
+    }
+
     //Sets health
     public void setHealth(int health) {
         this.health = health;
@@ -70,6 +88,18 @@ abstract class Entity extends Mover{
     //Sets armor
     public void setArmor(int armor) {
         this.armor = armor;
+    }
+
+    //Shoot projectile
+    public void shoot() {
+        fireCount += fireRate;
+
+        if(fireCount >=1) {
+            Projectile projectile = new Projectile(projectileSprite, getGP(), this);
+            getGP().getProjectileList().add(projectile);
+
+            fireCount--;
+        }
     }
 
     //Paint method allowing for rotation of sprites

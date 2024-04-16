@@ -32,9 +32,7 @@ public class Avatar extends Entity{
                 break;
         }
 
-        if(input.isShooting()) {
-            shoot();
-        }
+        shoot();
         
         //Wall collision
         if(getX() > 0) {
@@ -49,11 +47,11 @@ public class Avatar extends Entity{
         setDX(0);
     }
 
-    //Shoot projectile
+    @Override
     public void shoot() {
-        Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this);
-
-        getGP().getProjectileList().add(projectile);
+        if(input.isShooting()) {
+            super.shoot();
+        }
     }
 
     //Call parent class overloaded method with rotation
