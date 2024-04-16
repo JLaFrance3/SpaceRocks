@@ -38,9 +38,19 @@ public class SpriteSheet {
         this.yOffset = yOffset;
     }
 
+    public void setSpriteSize(int width, int height) {
+        this.sWidth = width;
+        this.sHeight = height;
+    }
+
     public void setOffset(int xOffset, int yOffset) {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
+    }
+
+    public void setPointer(int width, int height, int x, int y) {
+        setSpriteSize(width, height);
+        setOffset(x, y);
     }
 
     public BufferedImage getSprite(int col, int row) {

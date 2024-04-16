@@ -25,7 +25,16 @@ public class ControlPanel extends JPanel{
 
     private InputListener listener;
     private BufferedImage console;
-    
+    private BufferedImage UI_SS;
+    private SpriteSheet UI;
+
+    private BufferedImage joystickBase;
+    private BufferedImage joystick;
+    private BufferedImage[] icons;
+    private BufferedImage healthBar;
+    private BufferedImage armorBar;
+    private BufferedImage healthDot;
+    private BufferedImage armorDot;
 
     public ControlPanel(InputHolder input) {
         //Initialize
@@ -46,9 +55,34 @@ public class ControlPanel extends JPanel{
 
         try {
             console = loader.load("res/Console.png");
+            UI_SS = loader.load("res/UISheet.png");
         } catch(IOException e) {
             e.printStackTrace();
         }
+
+        //Load onscreen joystick
+        UI = new SpriteSheet(UI_SS, 97, 97, 294, 60);
+        joystickBase = UI.getSprite(1, 1);
+        UI.setPointer(50, 50, 391, 60);
+        joystick = UI.getSprite(1, 1);
+
+        //Load icons
+        icons = new BufferedImage[17];
+        UI.setPointer(30, 30, 0, 0);
+
+        for(int i = 1; i <= icons.length; i++) {
+            icons[i-1] = UI.getSprite(i, 1);
+        }
+
+        //Load bars
+        UI.setPointer(200, 50, 0, 60);
+        healthBar = UI.getSprite(1, 2);
+        armorBar = UI.getSprite(1, 1);
+
+        //Load fill dots for bars
+        UI.setPointer(13, 39, 200, 60);
+        healthDot = UI.getSprite(2, 1);
+        armorDot = UI.getSprite(1, 1);
     }
 
     public void paintComponent(Graphics g) {
@@ -56,9 +90,10 @@ public class ControlPanel extends JPanel{
        
         Graphics2D brush = (Graphics2D)g.create();
 
-        if(console != null) {
-            g.drawImage(console, 0, 0, null);
-        }
+        g.drawImage(console, 0, 0, null);
+        g.drawImage(joystickBase, WIDTH/2-joystickBase.getWidth()/2, HEIGHT/2-joystickBase.getHeight()/2, null);
+        g.drawImage(joystick, WIDTH/2-joystick.getWidth()/2, HEIGHT/2-joystick.getHeight()/2, null);
+        g.drawImage(healthBar, 200, 0, null);
     }
     
 
