@@ -29,6 +29,7 @@ public class GamePanel extends JPanel{
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private BufferedImage shipSS;
     private BufferedImage projectileSS;
+    private BufferedImage background;
     private SpriteSheet ships;
     private SpriteSheet lasers;
     private BufferedImage playerAvatar;
@@ -56,7 +57,9 @@ public class GamePanel extends JPanel{
         BufferedImageLoader loader = new BufferedImageLoader();
 
         try {
+            background = loader.load("res/BlueBackground1.png");
             shipSS = loader.load("res/ShipSheet.png");
+            projectileSS = loader.load("res/ProjectileSheet.png");
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -64,12 +67,6 @@ public class GamePanel extends JPanel{
         ships = new SpriteSheet(shipSS, 59, 47);
         playerAvatar = ships.getSprite(1, 1);
         player = new Avatar(playerAvatar, this, input);
-
-        try {
-            projectileSS = loader.load("res/ProjectileSheet.png");
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
 
         lasers = new SpriteSheet(projectileSS, 42, 68, 90);
         beam = lasers.getSprite(1, 1);
@@ -127,6 +124,9 @@ public class GamePanel extends JPanel{
        
         Graphics2D brush = (Graphics2D)g.create();
 
+        if(background != null) {
+            g.drawImage(background, 0, 0, null);
+        }
         if (player != null) {
             player.paint(brush);
         }
