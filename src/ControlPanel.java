@@ -49,6 +49,10 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+                input.setShooting(true);
+            }
+
             switch(e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
@@ -57,9 +61,6 @@ public class ControlPanel extends JPanel{
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
                     input.setInput('s');
-                    break;
-                case KeyEvent.VK_SPACE:
-                    input.setInput(' ');
                     break;
                 case KeyEvent.VK_BACK_SPACE:
                 case KeyEvent.VK_ESCAPE:
@@ -70,6 +71,10 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void keyReleased(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+                input.setShooting(false);
+            }
+
             //Ensure escape key goes through
             if(input.getInput() != 'e') {
                 input.clear();

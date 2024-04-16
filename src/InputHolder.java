@@ -13,6 +13,7 @@
  public class InputHolder {
     
     private char userInput;
+    private boolean isShooting;
 
     public InputHolder() {
         userInput = ' ';
@@ -28,6 +29,14 @@
 
     public char getInput() {
         return userInput;
+    }
+
+    public void setShooting(boolean isShooting) {
+        this.isShooting = isShooting;
+    }
+
+    public boolean isShooting() {
+        return isShooting;
     }
 
 }

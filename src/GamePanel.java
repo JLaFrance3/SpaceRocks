@@ -28,10 +28,14 @@ public class GamePanel extends JPanel{
 
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private BufferedImage shipSS;
+    private BufferedImage projectileSS;
     private SpriteSheet ships;
-
+    private SpriteSheet lasers;
     private BufferedImage playerAvatar;
+    private BufferedImage beam;
     private Avatar player;
+
+    private ProjectileList projectiles;
 
     public GamePanel(InputHolder input) {
         //Initialize
@@ -39,6 +43,7 @@ public class GamePanel extends JPanel{
         running = false;
         timer = new Timer(DELAY, new ClockListener(this));
         random = new Random();
+        projectiles = new ProjectileList();
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -59,24 +64,40 @@ public class GamePanel extends JPanel{
         ships = new SpriteSheet(shipSS, 59, 47);
         playerAvatar = ships.getSprite(1, 1);
         player = new Avatar(playerAvatar, this, input);
+
+        try {
+            projectileSS = loader.load("res/ProjectileSheet.png");
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        lasers = new SpriteSheet(projectileSS, 42, 68, 90);
+        beam = lasers.getSprite(1, 1);
+        player.setProjectileSprite(beam);
     }
 
     public void start() {
         if(running) {
             return;
         }
-        System.out.println("Started");
+        
         running = true;
         timer.start();
-        init();
     }
 
     public void tick() {
+
         if(player != null) {
             player.tick();
         }
+        if(projectiles != null) {
+            projectiles.tick();
+        }
 
         repaint();
+
+        //Delete
+        projectiles.debug();
     }
 
     public void end() {
@@ -96,15 +117,23 @@ public class GamePanel extends JPanel{
         
     }
 
+    public ProjectileList getProjectileList() {
+        return projectiles;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
        
+        Graphics2D brush = (Graphics2D)g.create();
+
         if (player != null) {
-            Graphics2D brush = (Graphics2D)g.create();
             player.paint(brush);
-            brush.dispose();
         }
+        if(projectiles != null) {
+            projectiles.paint(brush);
+        }
+        brush.dispose();
     }
 
     private class ClockListener implements ActionListener {
