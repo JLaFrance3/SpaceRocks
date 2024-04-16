@@ -27,6 +27,13 @@ public class Avatar extends Entity{
             case 's':
                 setDX(-getSpeed());
                 break;
+            case 'e':
+                //TODO: Menu
+                break;
+        }
+
+        if(input.isShooting()) {
+            shoot();
         }
         
         //Wall collision
@@ -44,7 +51,9 @@ public class Avatar extends Entity{
 
     //Shoot projectile
     public void shoot() {
+        Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this);
 
+        getGP().getProjectileList().add(projectile);
     }
 
     //Call parent class overloaded method with rotation

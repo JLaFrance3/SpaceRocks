@@ -37,6 +37,7 @@ public class GameFrame extends JFrame{
         this.setLocationRelativeTo(null);
 
         //Start Game
+        gPanel.init();
         gPanel.start();
     }
 
