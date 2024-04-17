@@ -7,14 +7,16 @@
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-public class ProjectileList {
+public class ObjectManager {
     
     private ArrayList<Projectile> projectiles;
-    private ArrayList<Projectile> out;
+    private ArrayList<Projectile> delProjectiles;
+    private ArrayList<Rock> rocks;
+    private ArrayList<Rock> delRocks;
 
-    public ProjectileList() {
+    public ObjectManager() {
         projectiles = new ArrayList<Projectile>();
-        out = new ArrayList<Projectile>();
+        delProjectiles = new ArrayList<Projectile>();
     }
 
     public void tick() {
@@ -23,23 +25,39 @@ public class ProjectileList {
 
             //Check bounds
             if (p.getX() < -20 || p.getX() > 820) {
-                out.add(p);
+                delProjectiles.add(p);
             }
             if(p.getY() < -20 || p.getY() > 430) {
-                out.add(p);
+                delProjectiles.add(p);
             }
         }
 
-        for(Projectile q : out) {
+        for(Rock r : rocks) {
+            r.tick();
+
+            //Check bounds
+            if (r.getX() < -20 || r.getX() > 820) {
+                delRocks.add(r);
+            }
+            if(r.getY() < -20 || r.getY() > 430) {
+                delRocks.add(r);
+            }
+        }
+
+        //Remove out of bounds objects
+        for(Projectile q : delProjectiles) {
             projectiles.remove(q);
+        }
+        for(Rock n : delRocks) {
+            rocks.remove(n);
         }
     }
 
-    public void add(Projectile p) {
+    public void addProjectile(Projectile p) {
         projectiles.add(p);
     }
 
-    public void remove(Projectile p) {
+    public void removeProjectile(Projectile p) {
         projectiles.remove(p);
     }
 

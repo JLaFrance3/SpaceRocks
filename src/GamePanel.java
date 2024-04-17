@@ -35,7 +35,7 @@ public class GamePanel extends JPanel{
     private SpriteSheet lasers;
     private Avatar player;
 
-    private ProjectileList projectiles;
+    private ObjectManager objects;
 
     public GamePanel(InputHolder input, ControlPanel panel) {
         //Initialize
@@ -44,7 +44,7 @@ public class GamePanel extends JPanel{
         this.cPanel = panel;
         timer = new Timer(DELAY, new ClockListener(this));
         random = new Random();
-        projectiles = new ProjectileList();
+        objects = new ObjectManager();
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -79,13 +79,13 @@ public class GamePanel extends JPanel{
 
     public void tick() {
         player.tick();
-        projectiles.tick();
+        objects.tick();
         cPanel.tick();
 
         repaint();
 
         //Delete
-        projectiles.debug();
+        objects.debug();
     }
 
     public void end() {
@@ -105,8 +105,8 @@ public class GamePanel extends JPanel{
         
     }
 
-    public ProjectileList getProjectileList() {
-        return projectiles;
+    public ObjectManager getObjectManager() {
+        return objects;
     }
 
     @Override
@@ -121,8 +121,8 @@ public class GamePanel extends JPanel{
         if (player != null) {
             player.paint(brush);
         }
-        if(projectiles != null) {
-            projectiles.paint(brush);
+        if(objects != null) {
+            objects.paint(brush);
         }
         brush.dispose();
     }
