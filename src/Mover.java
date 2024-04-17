@@ -33,22 +33,7 @@ abstract class Mover {
         setLocation(100, 100);
     }
 
-    //Constructor with rotation
-    public Mover(BufferedImage sprite, GamePanel gp, int rotation) {
-        speed = 10;
-        damage = 50;
-
-        dX = 0;
-        dY = 0;
-
-        this.rotation = rotation;
-        this.sprite = sprite;
-        this.gp = gp;
-
-        setLocation(100, 100);
-    }
-
-    //Constructor with position
+    //Constructor with position/rotation
     public Mover(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
         speed = 10;
         damage = 50;
@@ -60,8 +45,21 @@ abstract class Mover {
         this.sprite = sprite;
         this.gp = gp;
 
-        this.x = x;
-        this.y = y;
+        setLocation(x, y);
+    }
+
+    //Constructor with position and delta values
+    public Mover(BufferedImage sprite, GamePanel gp, int x, int y, int dx, int dy) {
+        rotation = 0;
+        speed = 0;
+        damage = 50;
+
+        this.dX = dx;
+        this.dY = dy;
+
+        this.sprite = sprite;
+        this.gp = gp;
+
         setLocation(x, y);
     }
 
@@ -166,15 +164,6 @@ abstract class Mover {
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 
             brush.drawImage(op.filter(sprite, null), x, y, null);
-
-            // double rotateX_Axis = sprite.getWidth() / 2;
-            // double rotateY_Axis = sprite.getHeight() / 2;
-
-            // brush.rotate(Math.toRadians(rotation), rotateX_Axis, rotateY_Axis);
-
-            // brush.drawImage(sprite, x, y, gp);
-
-            // brush.rotate(Math.toRadians(-rotation), rotateX_Axis, rotateY_Axis);
         }
     }
 }

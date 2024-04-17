@@ -31,6 +31,7 @@ public class ControlPanel extends JPanel{
     private BufferedImage joystickBase;
     private BufferedImage joystick;
     private int stickUp, stickDown, stickPos;
+    
     private BufferedImage healthBar;
     private BufferedImage armorBar;
     private BufferedImage healthDot;

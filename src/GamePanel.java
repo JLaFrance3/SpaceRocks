@@ -28,13 +28,11 @@ public class GamePanel extends JPanel{
     private InputHolder input;
 
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-    private BufferedImage shipSS;
-    private BufferedImage projectileSS;
     private BufferedImage background;
+    private BufferedImage shipSS;
     private SpriteSheet ships;
+    private BufferedImage projectileSS;
     private SpriteSheet lasers;
-    private BufferedImage playerAvatar;
-    private BufferedImage beam;
     private Avatar player;
 
     private ProjectileList projectiles;
@@ -64,12 +62,10 @@ public class GamePanel extends JPanel{
         }
 
         ships = new SpriteSheet(shipSS, 59, 47);
-        playerAvatar = ships.getSprite(1, 1);
-        player = new Avatar(playerAvatar, this, input);
+        player = new Avatar(ships.getSprite(1, 1), this, input);
 
         lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
-        beam = lasers.getSprite(1, 1);
-        player.setProjectileSprite(beam);
+        player.setProjectileSprite(lasers.getSprite(1, 1));
     }
 
     public void start() {
