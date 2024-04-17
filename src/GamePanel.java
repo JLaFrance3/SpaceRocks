@@ -22,6 +22,7 @@ public class GamePanel extends JPanel{
     private final int HEIGHT = 450;
 
     private boolean running = false;
+    private ControlPanel cPanel;
     private Timer timer;
     private Random random;
     private InputHolder input;
@@ -38,19 +39,17 @@ public class GamePanel extends JPanel{
 
     private ProjectileList projectiles;
 
-    public GamePanel(InputHolder input) {
+    public GamePanel(InputHolder input, ControlPanel panel) {
         //Initialize
         this.input = input;
         running = false;
+        this.cPanel = panel;
         timer = new Timer(DELAY, new ClockListener(this));
         random = new Random();
         projectiles = new ProjectileList();
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-
-        //Delete later
-        this.setBackground(java.awt.Color.black);
     }
 
     public void init() {
@@ -83,13 +82,9 @@ public class GamePanel extends JPanel{
     }
 
     public void tick() {
-
-        if(player != null) {
-            player.tick();
-        }
-        if(projectiles != null) {
-            projectiles.tick();
-        }
+        player.tick();
+        projectiles.tick();
+        cPanel.tick();
 
         repaint();
 

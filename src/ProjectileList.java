@@ -25,7 +25,7 @@ public class ProjectileList {
             if (p.getX() < -450 || p.getX() >= 30) {
                 out.add(p);
             }
-            if(p.getY() > 800 || p.getY() <= 30) {
+            if(p.getY() > 800 || p.getY() <= -30) {
                 out.add(p);
             }
         }
