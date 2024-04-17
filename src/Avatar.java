@@ -13,7 +13,7 @@ public class Avatar extends Entity{
 
     //Player avatar constructor
     public Avatar(BufferedImage sprite, GamePanel gp, InputHolder input) {
-        super(sprite, gp, -200, 725, -90);
+        super(sprite, gp, 725, 200, -90);
 
         this.input = input;
     }
@@ -22,10 +22,10 @@ public class Avatar extends Entity{
         //Coordinate plane is all wonky due to graphics getting rotated
         switch(input.getInput()) {
             case 'w':
-                setDX(getSpeed());
+                setDY(-getSpeed());
                 break;
             case 's':
-                setDX(-getSpeed());
+                setDY(getSpeed());
                 break;
             case 'e':
                 //TODO: Menu
@@ -35,16 +35,16 @@ public class Avatar extends Entity{
         shoot();
         
         //Wall collision
-        if(getX() > 0) {
-            setLocation(0, getY());
+        if(getY() < 0) {
+            setLocation(getX(), 0);
         }
-        if (getX() < -getGP().getHeight() + 190) {
-            setLocation(-getGP().getHeight() + 190, getY());
+        if (getY() > getGP().getHeight() - 190) {
+            setLocation(getX(), getGP().getHeight() - 190);
         }
 
         super.tick();
 
-        setDX(0);
+        setDY(0);
     }
 
     @Override

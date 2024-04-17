@@ -67,7 +67,7 @@ public class GamePanel extends JPanel{
         playerAvatar = ships.getSprite(1, 1);
         player = new Avatar(playerAvatar, this, input);
 
-        lasers = new SpriteSheet(projectileSS, 42, 68, 90);
+        lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
         beam = lasers.getSprite(1, 1);
         player.setProjectileSprite(beam);
     }
