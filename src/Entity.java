@@ -86,7 +86,7 @@ abstract class Entity extends Mover{
 
         if(fireCount >=1) {
             Projectile projectile = new Projectile(projectileSprite, getGP(), this);
-            getGP().getObjectManager().addProjectile(projectile);
+            getGP().getObjectManager().addMover(projectile);
 
             fireCount--;
         }

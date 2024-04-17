@@ -63,6 +63,9 @@ abstract class Mover {
         setLocation(x, y);
     }
 
+    //Abstract methods
+    abstract void paint(Graphics2D brush);
+
     //Game tick
     public void tick() {
         x+=dX;
