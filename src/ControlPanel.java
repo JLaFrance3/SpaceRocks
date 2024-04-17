@@ -30,7 +30,7 @@ public class ControlPanel extends JPanel{
 
     private BufferedImage joystickBase;
     private BufferedImage joystick;
-    private BufferedImage[] icons;
+    private int stickUp, stickDown, stickPos;
     private BufferedImage healthBar;
     private BufferedImage armorBar;
     private BufferedImage healthDot;
@@ -65,14 +65,9 @@ public class ControlPanel extends JPanel{
         joystickBase = UI.getSprite(1, 1);
         UI.setPointer(50, 50, 391, 60);
         joystick = UI.getSprite(1, 1);
-
-        //Load icons
-        icons = new BufferedImage[17];
-        UI.setPointer(30, 30, 0, 0);
-
-        for(int i = 1; i <= icons.length; i++) {
-            icons[i-1] = UI.getSprite(i, 1);
-        }
+        stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
+        stickUp = stickPos - 20;
+        stickDown = stickPos + 20;
 
         //Load bars
         UI.setPointer(200, 50, 0, 60);
@@ -85,15 +80,29 @@ public class ControlPanel extends JPanel{
         armorDot = UI.getSprite(1, 1);
     }
 
+    public void tick() {
+
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
        
         Graphics2D brush = (Graphics2D)g.create();
 
         g.drawImage(console, 0, 0, null);
-        g.drawImage(joystickBase, WIDTH/2-joystickBase.getWidth()/2, HEIGHT/2-joystickBase.getHeight()/2, null);
-        g.drawImage(joystick, WIDTH/2-joystick.getWidth()/2, HEIGHT/2-joystick.getHeight()/2, null);
-        g.drawImage(healthBar, 200, 0, null);
+
+        if(joystickBase != null) {
+            g.drawImage(joystickBase, WIDTH/2-joystickBase.getWidth()/2, HEIGHT/2-joystickBase.getHeight()/2, null);
+        }
+        if(joystick != null) {
+            g.drawImage(joystick, WIDTH/2-joystick.getWidth()/2, stickPos, null);
+        }
+        if(healthBar != null) {
+            g.drawImage(healthBar, 560, 65, null);
+        }
+        if (armorBar != null) {
+            g.drawImage(armorBar, 30, 65, null);
+        }
     }
     
 
@@ -115,11 +124,15 @@ public class ControlPanel extends JPanel{
             switch(e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
+                case KeyEvent.VK_D:
                     input.setInput('w');
+                    stickPos = stickUp;
                     break;
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
+                case KeyEvent.VK_A:
                     input.setInput('s');
+                    stickPos = stickDown;
                     break;
                 case KeyEvent.VK_BACK_SPACE:
                 case KeyEvent.VK_ESCAPE:
@@ -133,9 +146,12 @@ public class ControlPanel extends JPanel{
             if(e.getKeyCode() == KeyEvent.VK_SPACE) {
                 input.setShooting(false);
             }
-
             //Ensure escape key goes through
-            if(input.getInput() != 'e') {
+            else if(input.getInput() != 'e') {
+                if(input.getInput() == 'w' || input.getInput() == 's') {
+                    stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
+                }
+
                 input.clear();
             }
         }
@@ -144,9 +160,11 @@ public class ControlPanel extends JPanel{
         public void mouseDragged(MouseEvent e) {
             if(e.getY() < clickPosition.getY()) {
                 input.setInput('w');
+                stickPos = stickUp;
             }
             else if(e.getY() > clickPosition.getY()) {
                 input.setInput('s');
+                stickPos = stickDown;
             }
         }
 
@@ -157,6 +175,8 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
+
             input.clear();
         }
 

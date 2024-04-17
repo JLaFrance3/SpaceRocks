@@ -20,8 +20,8 @@ public class GameFrame extends JFrame{
 
         //Initialize
         input = new InputHolder();
-        gPanel = new GamePanel(input);
         cPanel = new ControlPanel(input);
+        gPanel = new GamePanel(input, cPanel);
 
         //Layered Pane
         layer = new JLayeredPane();
