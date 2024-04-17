@@ -22,14 +22,6 @@ public class SpriteSheet {
         this.yOffset = 0;
     }
 
-    public SpriteSheet(BufferedImage ss, int width, int height, int yOffset) {
-        this.spriteSheet = ss;
-        this.sWidth = width;
-        this.sHeight = height;
-        this.xOffset = 0;
-        this.yOffset = yOffset;
-    }
-
     public SpriteSheet(BufferedImage ss, int width, int height, int xOffset, int yOffset) {
         this.spriteSheet = ss;
         this.sWidth = width;

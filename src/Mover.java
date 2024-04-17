@@ -5,6 +5,8 @@
  */
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 abstract class Mover {
@@ -157,14 +159,22 @@ abstract class Mover {
             brush.drawImage(sprite, x, y, gp);
         }
         else {
-            double rotateX_Axis = sprite.getWidth() / 2;
-            double rotateY_Axis = sprite.getHeight() / 2;
+            double rx = sprite.getWidth() / 2;
+            double ry = sprite.getHeight() / 2;
 
-            brush.rotate(Math.toRadians(rotation), rotateX_Axis, rotateY_Axis);
+            AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(rotation), rx, ry);
+            AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 
-            brush.drawImage(sprite, x, y, gp);
+            brush.drawImage(op.filter(sprite, null), x, y, null);
 
-            brush.rotate(Math.toRadians(-rotation), rotateX_Axis, rotateY_Axis);
+            // double rotateX_Axis = sprite.getWidth() / 2;
+            // double rotateY_Axis = sprite.getHeight() / 2;
+
+            // brush.rotate(Math.toRadians(rotation), rotateX_Axis, rotateY_Axis);
+
+            // brush.drawImage(sprite, x, y, gp);
+
+            // brush.rotate(Math.toRadians(-rotation), rotateX_Axis, rotateY_Axis);
         }
     }
 }

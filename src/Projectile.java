@@ -19,9 +19,9 @@ public class Projectile extends Mover{
         super(sprite, gp);
 
         setRotation(ent.getRotation());
-        setLocation(ent.getX() + 10, ent.getY());
+        setLocation(ent.getX(), ent.getY() - 10);
 
-        setDY(-getSpeed());
+        setDX(-getSpeed());
     }
 
     public void paint(Graphics2D brush) {

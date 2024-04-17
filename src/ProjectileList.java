@@ -22,10 +22,10 @@ public class ProjectileList {
             p.tick();
 
             //Check bounds
-            if (p.getX() < -450 || p.getX() >= 30) {
+            if (p.getX() < -20 || p.getX() > 820) {
                 out.add(p);
             }
-            if(p.getY() > 800 || p.getY() <= -30) {
+            if(p.getY() < -20 || p.getY() > 430) {
                 out.add(p);
             }
         }
