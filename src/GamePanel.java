@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -24,29 +23,22 @@ public class GamePanel extends JPanel{
     private boolean running = false;
     private ControlPanel cPanel;
     private Timer timer;
-    private Random random;
     private InputHolder input;
 
-    private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-    private BufferedImage shipSS;
-    private BufferedImage projectileSS;
     private BufferedImage background;
     private SpriteSheet ships;
     private SpriteSheet lasers;
-    private BufferedImage playerAvatar;
-    private BufferedImage beam;
     private Avatar player;
 
-    private ProjectileList projectiles;
+    private ObjectManager manager;
 
     public GamePanel(InputHolder input, ControlPanel panel) {
         //Initialize
         this.input = input;
         running = false;
         this.cPanel = panel;
-        timer = new Timer(DELAY, new ClockListener(this));
-        random = new Random();
-        projectiles = new ProjectileList();
+        timer = new Timer(DELAY, new ClockListener());
+        manager = new ObjectManager(this, cPanel);
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -54,22 +46,25 @@ public class GamePanel extends JPanel{
 
     public void init() {
         BufferedImageLoader loader = new BufferedImageLoader();
+        BufferedImage shipSS;
+        BufferedImage projectileSS;
+
+        manager.init();
 
         try {
             background = loader.load("res/BlueBackground1.png");
             shipSS = loader.load("res/ShipSheet.png");
             projectileSS = loader.load("res/ProjectileSheet.png");
-        } catch(IOException e) {
+
+            ships = new SpriteSheet(shipSS, 59, 47);
+            player = new Avatar(ships.getSprite(1, 1), this, input);
+
+            lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
+            player.setProjectileSprite(lasers.getSprite(1, 1));
+        } 
+        catch (IOException e) {
             e.printStackTrace();
         }
-
-        ships = new SpriteSheet(shipSS, 59, 47);
-        playerAvatar = ships.getSprite(1, 1);
-        player = new Avatar(playerAvatar, this, input);
-
-        lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
-        beam = lasers.getSprite(1, 1);
-        player.setProjectileSprite(beam);
     }
 
     public void start() {
@@ -83,13 +78,13 @@ public class GamePanel extends JPanel{
 
     public void tick() {
         player.tick();
-        projectiles.tick();
+        manager.tick();
         cPanel.tick();
 
         repaint();
 
         //Delete
-        projectiles.debug();
+        // manager.debug();
     }
 
     public void end() {
@@ -109,8 +104,8 @@ public class GamePanel extends JPanel{
         
     }
 
-    public ProjectileList getProjectileList() {
-        return projectiles;
+    public ObjectManager getObjectManager() {
+        return manager;
     }
 
     @Override
@@ -125,20 +120,14 @@ public class GamePanel extends JPanel{
         if (player != null) {
             player.paint(brush);
         }
-        if(projectiles != null) {
-            projectiles.paint(brush);
+        if(manager != null) {
+            manager.paint(brush);
         }
         brush.dispose();
     }
 
     private class ClockListener implements ActionListener {
-
-        public JPanel panel;
         
-        public ClockListener(JPanel panel) {
-            this.panel = panel;
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
             if(running) {

@@ -26,16 +26,6 @@ abstract class Entity extends Mover{
         fireCount = 0;
     }
 
-    //Constructor with rotation
-    public Entity(BufferedImage sprite, GamePanel gp, int rotation) {
-        super(sprite, gp, rotation);
-        
-        health = 100;
-        armor = 0;
-        fireRate = .1;
-        fireCount = 0;
-    }
-
     //Constructor with position
     public Entity(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
         super(sprite, gp, x, y, rotation);
@@ -96,7 +86,7 @@ abstract class Entity extends Mover{
 
         if(fireCount >=1) {
             Projectile projectile = new Projectile(projectileSprite, getGP(), this);
-            getGP().getProjectileList().add(projectile);
+            getGP().getObjectManager().addMover(projectile);
 
             fireCount--;
         }
