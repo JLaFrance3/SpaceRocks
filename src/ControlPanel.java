@@ -6,7 +6,6 @@
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -87,8 +86,6 @@ public class ControlPanel extends JPanel{
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-       
-        Graphics2D brush = (Graphics2D)g.create();
 
         g.drawImage(console, 0, 0, null);
 

@@ -13,8 +13,8 @@ public class Rock extends Mover {
         super(sprite, gp);
     }
 
-    public Rock(BufferedImage sprite, GamePanel gp, int x, int y, int dx, int dy) {
-        super(sprite, gp, x, y, dx, dy);
+    public Rock(BufferedImage sprite, GamePanel gp, int x, int y) {
+        super(sprite, gp, x, y);
     }
 
     public void paint(Graphics2D brush) {

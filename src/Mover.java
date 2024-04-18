@@ -33,6 +33,21 @@ abstract class Mover {
         setLocation(100, 100);
     }
 
+    //Constructor with position
+    public Mover(BufferedImage sprite, GamePanel gp, int x, int y) {
+        rotation = 0;
+        speed = 5;
+        damage = 50;
+
+        this.dX = 0;
+        this.dY = 0;
+
+        this.sprite = sprite;
+        this.gp = gp;
+
+        setLocation(x, y);
+    }
+
     //Constructor with position/rotation
     public Mover(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
         speed = 10;
@@ -42,21 +57,6 @@ abstract class Mover {
         dY = 0;
 
         this.rotation = rotation;
-        this.sprite = sprite;
-        this.gp = gp;
-
-        setLocation(x, y);
-    }
-
-    //Constructor with position and delta values
-    public Mover(BufferedImage sprite, GamePanel gp, int x, int y, int dx, int dy) {
-        rotation = 0;
-        speed = 0;
-        damage = 50;
-
-        this.dX = dx;
-        this.dY = dy;
-
         this.sprite = sprite;
         this.gp = gp;
 
