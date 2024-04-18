@@ -97,7 +97,7 @@ public class GamePanel extends JPanel{
     }
 
     public void pause() {
-        
+        timer.stop();
     }
 
     public void unpause() {
@@ -112,7 +112,7 @@ public class GamePanel extends JPanel{
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
        
-        Graphics2D brush = (Graphics2D)g.create();
+        Graphics2D brush = (Graphics2D)g;
 
         if(background != null) {
             g.drawImage(background, 0, 0, null);
@@ -123,7 +123,6 @@ public class GamePanel extends JPanel{
         if(manager != null) {
             manager.paint(brush);
         }
-        brush.dispose();
     }
 
     private class ClockListener implements ActionListener {

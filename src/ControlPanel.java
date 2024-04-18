@@ -32,9 +32,9 @@ public class ControlPanel extends JPanel{
     private int stickUp, stickDown, stickPos;
     
     private BufferedImage healthBar;
-    private BufferedImage armorBar;
+    private BufferedImage shieldBar;
     private BufferedImage healthDot;
-    private BufferedImage armorDot;
+    private BufferedImage shieldDot;
 
     public ControlPanel(InputHolder input) {
         //Initialize
@@ -72,12 +72,12 @@ public class ControlPanel extends JPanel{
         //Load bars
         UI.setPointer(200, 50, 0, 60);
         healthBar = UI.getSprite(1, 2);
-        armorBar = UI.getSprite(1, 1);
+        shieldBar = UI.getSprite(1, 1);
 
         //Load fill dots for bars
         UI.setPointer(13, 39, 200, 60);
         healthDot = UI.getSprite(2, 1);
-        armorDot = UI.getSprite(1, 1);
+        shieldDot = UI.getSprite(1, 1);
     }
 
     public void tick() {
@@ -98,8 +98,8 @@ public class ControlPanel extends JPanel{
         if(healthBar != null) {
             g.drawImage(healthBar, 560, 65, null);
         }
-        if (armorBar != null) {
-            g.drawImage(armorBar, 30, 65, null);
+        if (shieldBar != null) {
+            g.drawImage(shieldBar, 30, 65, null);
         }
     }
     

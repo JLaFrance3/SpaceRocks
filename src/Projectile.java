@@ -15,11 +15,11 @@ public class Projectile extends Mover{
         setDX(-getSpeed());
     }
 
-    public Projectile(BufferedImage sprite, GamePanel gp, Entity ent) {
-        super(sprite, gp);
+    public Projectile(BufferedImage sprite, GamePanel gp, Ship ent) {
+        super(sprite, gp, ent.getX(), ent.getY() - 10);
 
         setRotation(ent.getRotation());
-        setLocation(ent.getX(), ent.getY() - 10);
+        setSpeed(20);
 
         setDX(-getSpeed());
     }

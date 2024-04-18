@@ -7,7 +7,7 @@
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class Avatar extends Entity{
+public class Avatar extends Ship{
 
     private InputHolder input;
 

@@ -7,31 +7,21 @@
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-abstract class Entity extends Mover{
+abstract class Ship extends Mover{
     
     private int health;         //Health
-    private int armor;          //Damage negation
+    private int shield;          //Damage negation
     private double fireRate;    //Limit fire rate with increment
     private double fireCount;
 
     private BufferedImage projectileSprite;     //Projectile sprite
 
-    //Constructor
-    public Entity(BufferedImage sprite, GamePanel gp) {
-        super(sprite, gp);
-        
-        health = 0;
-        armor = 0;
-        fireRate = .1;
-        fireCount = 0;
-    }
-
     //Constructor with position
-    public Entity(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
+    public Ship(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
         super(sprite, gp, x, y, rotation);
         
         health = 100;
-        armor = 0;
+        shield = 0;
         fireRate = .1;
         fireCount = 0;
     }
@@ -50,9 +40,9 @@ abstract class Entity extends Mover{
         return health;
     }
 
-    //Returns entity armor
-    public int getArmor() {
-        return armor;
+    //Returns entity shield
+    public int getshield() {
+        return shield;
     }
 
     //Gets projectile sprite
@@ -75,9 +65,9 @@ abstract class Entity extends Mover{
         this.health = health;
     }
 
-    //Sets armor
-    public void setArmor(int armor) {
-        this.armor = armor;
+    //Sets shield
+    public void setshield(int shield) {
+        this.shield = shield;
     }
 
     //Shoot projectile
