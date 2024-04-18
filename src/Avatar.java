@@ -18,7 +18,7 @@ public class Avatar extends Ship{
         super(sprite, gp, 725, 200, -90);
 
         this.input = input;
-        this.fireRate = .1;
+        this.fireRate = .05;
         this.fireCount = 0;
     }
 
@@ -40,10 +40,14 @@ public class Avatar extends Ship{
         
         //Wall collision
         if(getY() < 0) {
-            setLocation(getX(), 0);
+            if (getDY() < 0) {
+                setDY(0);
+            }
         }
         if (getY() > getGP().getHeight() - 190) {
-            setLocation(getX(), getGP().getHeight() - 190);
+            if (getDY() > 0) {
+                setDY(0);
+            }
         }
 
         super.tick();
