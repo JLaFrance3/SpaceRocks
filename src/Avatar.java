@@ -10,12 +10,16 @@ import java.awt.image.BufferedImage;
 public class Avatar extends Ship{
 
     private InputHolder input;
+    private double fireRate;    //Limit fire rate with increment
+    private double fireCount;
 
     //Player avatar constructor
     public Avatar(BufferedImage sprite, GamePanel gp, InputHolder input) {
         super(sprite, gp, 725, 200, -90);
 
         this.input = input;
+        this.fireRate = .1;
+        this.fireCount = 0;
     }
 
     public void tick() {
@@ -47,10 +51,25 @@ public class Avatar extends Ship{
         setDY(0);
     }
 
-    @Override
+    //Returns rate of fire multiplier
+    public double getFireRate() {
+        return fireRate;
+    }
+
+    //Set rate of fire
+    public void setFireRate(double fr) {
+        this.fireRate = fr;
+    }
+
     public void shoot() {
         if(input.isShooting()) {
-            super.shoot();
+            fireCount += fireRate;
+
+            if(fireCount >=1) {
+                Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this);
+                getGP().getObjectManager().addFriendly(projectile);
+                fireCount--;
+            }
         }
     }
 

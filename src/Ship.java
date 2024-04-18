@@ -11,8 +11,6 @@ abstract class Ship extends Mover{
     
     private int health;         //Health
     private int shield;          //Damage negation
-    private double fireRate;    //Limit fire rate with increment
-    private double fireCount;
 
     private BufferedImage projectileSprite;     //Projectile sprite
 
@@ -22,17 +20,12 @@ abstract class Ship extends Mover{
         
         health = 100;
         shield = 0;
-        fireRate = .1;
-        fireCount = 0;
     }
+
+    public abstract void shoot();
 
     public void tick() {
         super.tick();
-    }
-
-    //Returns rate of fire multiplier
-    public double getFireRate() {
-        return fireRate;
     }
 
     //Returns entity health
@@ -55,11 +48,6 @@ abstract class Ship extends Mover{
         this.projectileSprite = sprite;
     }
 
-    //Set rate of fire
-    public void setFireRate(double fr) {
-        this.fireRate = fr;
-    }
-
     //Sets health
     public void setHealth(int health) {
         this.health = health;
@@ -68,18 +56,6 @@ abstract class Ship extends Mover{
     //Sets shield
     public void setshield(int shield) {
         this.shield = shield;
-    }
-
-    //Shoot projectile
-    public void shoot() {
-        fireCount += fireRate;
-
-        if(fireCount >=1) {
-            Projectile projectile = new Projectile(projectileSprite, getGP(), this);
-            getGP().getObjectManager().addMover(projectile);
-
-            fireCount--;
-        }
     }
 
     //Paint method allowing for rotation of sprites

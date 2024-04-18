@@ -58,6 +58,7 @@ public class GamePanel extends JPanel{
 
             ships = new SpriteSheet(shipSS, 59, 47);
             player = new Avatar(ships.getSprite(1, 1), this, input);
+            manager.addFriendly(player);
 
             lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
             player.setProjectileSprite(lasers.getSprite(1, 1));
@@ -77,14 +78,10 @@ public class GamePanel extends JPanel{
     }
 
     public void tick() {
-        player.tick();
         manager.tick();
         cPanel.tick();
 
         repaint();
-
-        //Delete
-        // manager.debug();
     }
 
     public void end() {
