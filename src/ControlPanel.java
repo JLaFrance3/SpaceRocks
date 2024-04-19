@@ -134,6 +134,7 @@ public class ControlPanel extends JPanel{
                     break;
                 case KeyEvent.VK_BACK_SPACE:
                 case KeyEvent.VK_ESCAPE:
+                case KeyEvent.VK_E:
                     input.setInput('e');
                     break;
             }

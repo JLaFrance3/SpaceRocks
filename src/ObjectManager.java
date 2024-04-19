@@ -63,7 +63,7 @@ public class ObjectManager {
         tickCounter++;
 
         if(tickCounter >= spawnRate) {
-            spawnRock(1, 0);
+            spawnRock(3, 0);
             tickCounter = 0;
         }
 

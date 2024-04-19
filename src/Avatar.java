@@ -32,7 +32,8 @@ public class Avatar extends Ship{
                 setDY(getSpeed());
                 break;
             case 'e':
-                //TODO: Menu
+                getGP().pause();
+                //TODO: menu
                 break;
         }
 
