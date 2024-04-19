@@ -83,7 +83,7 @@ public class ObjectManager {
         tickCounter++;
 
         if(tickCounter >= spawnRate) {
-            spawnRock(1, 0);
+            spawnRock(1, 2);
             tickCounter = 0;
         }
 
@@ -129,9 +129,9 @@ public class ObjectManager {
                 break;
         }
 
-        originMaxY = 500 - height/2;
-        originMinY = 0 - height/2;
-        endMaxY = 500 - height/2;
+        originMaxY = 480 - height/2;
+        originMinY = -30 - height/2;
+        endMaxY = 450 - height/2;
         endMinY = 0 - height/2;
 
         for(int i = 0; i < quantity; i++) {
@@ -139,8 +139,8 @@ public class ObjectManager {
             originY = rand.nextInt(originMaxY - originMinY + 1) + originMinY;
             endY = rand.nextInt(endMaxY - endMinY + 1) + endMinY;
 
-            //(y-y1)=(x-x1)m
-            m = (endY - originY) / ((800.0-width/2) - (-100.0-width/2));
+            //m = (y-y1) / (x-x1)
+            m = (endY - originY) / ((800.0-width/2) - (-300.0-width/2));
 
             //Rock size
             switch (size) {
@@ -160,13 +160,13 @@ public class ObjectManager {
             Rock rock;
             switch (size) {
                 case 2:
-                    rock = new Rock(largeRocks, gp, -100, originY);
+                    rock = new Rock(largeRocks, gp, -300, originY);
                     break;
                 case 1:
-                    rock = new Rock(medRocks, gp, -100, originY);
+                    rock = new Rock(medRocks, gp, -300, originY);
                     break;
                 default:
-                    rock = new Rock(smallRocks, gp, -100, originY);
+                    rock = new Rock(smallRocks, gp, -300, originY);
                     break;
             }
 
@@ -222,11 +222,15 @@ public class ObjectManager {
             Mover q = hostile.get(j);
             q.tick();
 
-            //Check bounds
-            if (q.getX() < -120 || q.getX() > 850) {
+            if (q.getY() > 500 || q.getY() < -100) {
+                System.out.printf("(%d, %d)" + q, q.getX(), q.getY());
+            }
+
+            //Check bounds. Allow for some hostile to spawn off screen
+            if (q.getX() < -320 || q.getX() > 850) {
                 delHostile.add(q);
             }
-            if(q.getY() < -120 || q.getY() > 550) {
+            if(q.getY() < -320 || q.getY() > 770) {
                 delHostile.add(q);
             }
         }
