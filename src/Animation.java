@@ -8,7 +8,7 @@
 
 public class Animation {
     
-    int speed, index, count, frames, startIndex;
+    int speed, speedIndex, count, frames, startIndex;
     Boolean reverse;
     BufferedImage[] images;
     BufferedImage currentImage;
@@ -17,23 +17,23 @@ public class Animation {
         this.images = images;
         this.reverse = false;
         this.speed = 6;
-        this.index = 0;
+        this.speedIndex = 0;
         this.frames = 16;
         this.startIndex = 0;
-        this.count = startIndex + 1;
+        this.count = startIndex;
     }
 
     public Animation(BufferedImage[] images, int speed, int frames, int startIndex, Boolean reverse) {
         this.images = images;
         this.reverse = reverse;
         this.speed = speed;
-        this.index = 0;
+        this.speedIndex = 0;
         this.startIndex = startIndex;
-        this.count = startIndex + 1;
+        this.count = startIndex;
         this.frames = frames;
         
         if (reverse) {
-            count += frames;
+            count += frames - 1;
         }
     }
 
@@ -42,28 +42,28 @@ public class Animation {
     }
 
     public void runAnimation() {
-        index++;
-        if(index > speed) {
-            index = 0;
+        speedIndex++;
+        if(speedIndex > speed) {
+            speedIndex = 0;
             nextFrame();
         }
     }
 
     private void nextFrame() {
-        currentImage = images[count-1];
+        currentImage = images[count];
 
         if(reverse) {
             count--;
 
-            if (count < 1) {
-                count += frames;
+            if (count <= startIndex) {
+                count += frames - 1;
             }
         }
         else {
             count++;
 
-            if (count > frames) {
-                count = 1;
+            if (count >= frames + startIndex) {
+                count = startIndex;
             }
         }
 

@@ -83,7 +83,7 @@ public class ObjectManager {
         tickCounter++;
 
         if(tickCounter >= spawnRate) {
-            spawnRock(1, 2);
+            spawnRock(1, 0);
             tickCounter = 0;
         }
 
@@ -221,10 +221,6 @@ public class ObjectManager {
         for(int j = hostile.size() - 1; j >= 0; j--) {
             Mover q = hostile.get(j);
             q.tick();
-
-            if (q.getY() > 500 || q.getY() < -100) {
-                System.out.printf("(%d, %d)" + q, q.getX(), q.getY());
-            }
 
             //Check bounds. Allow for some hostile to spawn off screen
             if (q.getX() < -320 || q.getX() > 850) {
