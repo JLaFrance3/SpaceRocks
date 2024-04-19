@@ -19,9 +19,13 @@ public class ObjectManager {
     private ControlPanel cp;
     private Random rand;
 
-    private SpriteSheet smallRocks;
-    private SpriteSheet medRocks;
-    private SpriteSheet largeRocks;
+    private SpriteSheet smallRockSS;
+    private SpriteSheet medRockSS;
+    private SpriteSheet largeRockSS;
+
+    private BufferedImage[] smallRocks;
+    private BufferedImage[] medRocks;
+    private BufferedImage[] largeRocks;
 
     private int tickCounter, spawnRate;
 
@@ -40,21 +44,37 @@ public class ObjectManager {
 
     public void init() {
         BufferedImageLoader loader = new BufferedImageLoader();
-        BufferedImage smallRockSS;
-        BufferedImage medRockSS;
-        BufferedImage largeRockSS;
+        BufferedImage small;
+        BufferedImage medium;
+        BufferedImage large;
 
         try {
-            smallRockSS = loader.load("res/SmallRocks.png");
-            medRockSS = loader.load("res/MedRocks.png");
-            largeRockSS = loader.load("res/BigRocks.png");
+            small = loader.load("res/SmallRocks.png");
+            medium = loader.load("res/MedRocks.png");
+            large = loader.load("res/BigRocks.png");
 
-            smallRocks = new SpriteSheet(smallRockSS, 64, 64);
-            medRocks = new SpriteSheet(medRockSS, 120, 120);
-            largeRocks = new SpriteSheet(largeRockSS, 320, 320);
+            smallRockSS = new SpriteSheet(small, 64, 64);
+            medRockSS = new SpriteSheet(medium, 120, 120);
+            largeRockSS = new SpriteSheet(large, 320, 240);
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+
+        //Load rock images for animation
+        smallRocks = new BufferedImage[96];
+        medRocks = new BufferedImage[96];
+        for (int i = 0; i < 6; i++) {
+            for(int j = 1; j <= 16; j++) {
+                smallRocks[(i*16)+j-1] = smallRockSS.getSprite(j, i+1);
+                medRocks[(i*16)+j-1] = medRockSS.getSprite(j, i+1);
+            }
+        }
+        largeRocks = new BufferedImage[64];
+        for (int i = 0; i < 4; i++) {
+            for(int j = 1; j <= 16; j++) {
+                largeRocks[(i*16)+j-1] = largeRockSS.getSprite(j, i+1);
+            }
         }
     }
 
@@ -63,7 +83,7 @@ public class ObjectManager {
         tickCounter++;
 
         if(tickCounter >= spawnRate) {
-            spawnRock(3, 0);
+            spawnRock(1, 0);
             tickCounter = 0;
         }
 
@@ -89,20 +109,23 @@ public class ObjectManager {
     }
 
     //Spawn rock randomly within spawn range: (-100, 0) -> (-100, 500)
-    public void spawnRock(int quantity, int type) {
+    public void spawnRock(int quantity, int size) {
         int originY, endY, originMaxY, originMinY, endMaxY, endMinY;
-        int height;
+        int height, width;
         double m, dx, dy;
 
-        switch (type) {
+        switch (size) {
             case 2:
-                height = 320;
+                height = 240;
+                width = 320;
                 break;
             case 1:
                 height = 120;
+                width = 120;
                 break;
             default:
                 height = 64;
+                width = 64;
                 break;
         }
 
@@ -112,22 +135,45 @@ public class ObjectManager {
         endMinY = 0 - height/2;
 
         for(int i = 0; i < quantity; i++) {
+            //Get random origin and end Y values for trajectory calculation
             originY = rand.nextInt(originMaxY - originMinY + 1) + originMinY;
             endY = rand.nextInt(endMaxY - endMinY + 1) + endMinY;
 
             //(y-y1)=(x-x1)m
-            m = (endY - originY) / ((800.0-height/2) - (-100.0-height/2));
+            m = (endY - originY) / ((800.0-width/2) - (-100.0-width/2));
 
-            Rock rock = new Rock(smallRocks.getSprite(1, 1), gp, -100, originY);
-            rock.setSpeed(rand.nextInt(9)+2);
+            //Rock size
+            switch (size) {
+                case 2:
+                    dx = rand.nextInt(2)+1;   //1-2 speed
+                    break;
+                case 1:
+                    dx = rand.nextInt(4)+2;   //2-5 speed
+                    break;
+                default:
+                    dx = rand.nextInt(5)+3;   //3-7 speed
+                    break;
+            }
 
-            dx = rock.getSpeed();
             dy = m * dx;
+
+            Rock rock;
+            switch (size) {
+                case 2:
+                    rock = new Rock(largeRocks, gp, -100, originY);
+                    break;
+                case 1:
+                    rock = new Rock(medRocks, gp, -100, originY);
+                    break;
+                default:
+                    rock = new Rock(smallRocks, gp, -100, originY);
+                    break;
+            }
+
+            hostile.add(rock);
 
             rock.setDX((int)dx);
             rock.setDY((int)dy);
-
-            hostile.add(rock);
         }
     }
 
