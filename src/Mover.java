@@ -5,9 +5,11 @@
  */
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.Shape;
 
 abstract class Mover {
     private int speed;              //Pixels/second?
@@ -15,6 +17,7 @@ abstract class Mover {
     private int dX, dY;             //Velocity
     private int rotation;           //Rotation of sprite
     private int damage;             //Damage
+    private Rectangle mask;         //Collision mask
 
     private BufferedImage sprite;   //sprite image
     private GamePanel gp;           //Panel
@@ -23,14 +26,15 @@ abstract class Mover {
         speed = 20;
         damage = 10;
         rotation = 0;
-
+        x = 100;
+        y = 100;
         dX = 0;
         dY = 0;
 
         this.sprite = sprite;
         this.gp = gp;
 
-        setLocation(100, 100);
+        mask = createMask();
     }
 
     //Constructor with position
@@ -39,13 +43,15 @@ abstract class Mover {
         speed = 5;
         damage = 50;
 
+        this.x = x;
+        this.y = y;
         this.dX = 0;
         this.dY = 0;
 
         this.sprite = sprite;
         this.gp = gp;
 
-        setLocation(x, y);
+        mask = createMask();
     }
 
     //Constructor with position/rotation
@@ -53,6 +59,8 @@ abstract class Mover {
         speed = 10;
         damage = 50;
 
+        this.x = x;
+        this.y = y;
         dX = 0;
         dY = 0;
 
@@ -60,16 +68,46 @@ abstract class Mover {
         this.sprite = sprite;
         this.gp = gp;
 
-        setLocation(x, y);
+        mask = createMask();
     }
 
     //Abstract methods
     abstract void paint(Graphics2D brush);
 
+    //Creates rectangle based on RGB values for mask
+    private Rectangle createMask() {
+        Shape s;
+        int width = sprite.getWidth();
+        int height = sprite.getHeight();
+        int top = height / 2;
+        int bottom = top;
+        int left = width / 2;
+        int right = left;
+        
+        for(int i = 0; i < sprite.getWidth(); i++) {
+            for(int j = 0; j < sprite.getHeight(); j++) {
+                if (sprite.getRGB(i, j) != 0) {
+                    top = Math.min(top, j);
+                    bottom = Math.max(bottom, j);
+                    left = Math.min(left, i);
+                    right = Math.max(right, i);
+                }
+            }
+        }
+        
+        Rectangle r = new Rectangle(left+x, top+y, right-left, bottom-top);
+        AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(rotation), r.getCenterX(), r.getCenterY());
+        s = at.createTransformedShape(r);
+        r = s.getBounds();
+
+        return r;
+    }
+
     //Game tick
     public void tick() {
         x+=dX;
         y+=dY;
+        mask.translate(dX, dY);
     }
 
     //Returns entity speed
@@ -90,6 +128,11 @@ abstract class Mover {
     //Returns entity y coordinate
     public int getY() {
         return y;
+    }
+
+    //Return collision mask
+    public Rectangle getMask() {
+        return mask;
     }
 
     //Returns entity x velocity
@@ -126,11 +169,13 @@ abstract class Mover {
     //Sets entity rotation value
     public void setRotation(int rotation) {
         this.rotation = rotation;
+        mask = createMask();
     }
 
     //Sets entity sprite image
     public void setSprite(BufferedImage sprite) {
         this.sprite = sprite;
+        mask = createMask();
     }
 
     //Sets speed
@@ -157,7 +202,7 @@ abstract class Mover {
     public void paint(Graphics2D brush, int rotation) {
 
         if(rotation == 0) {
-            brush.drawImage(sprite, x, y, gp);
+            brush.drawImage(sprite, x, y, null);
         }
         else {
             double rx = sprite.getWidth() / 2;
@@ -165,8 +210,12 @@ abstract class Mover {
 
             AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(rotation), rx, ry);
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-
+            
             brush.drawImage(op.filter(sprite, null), x, y, null);
         }
+
+        //Delete
+        brush.setColor(java.awt.Color.RED);
+        brush.draw(mask);
     }
 }
