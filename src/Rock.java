@@ -20,7 +20,14 @@ public class Rock extends Mover {
     public Rock(BufferedImage[] rocks, GamePanel gp, int x, int y) {
         super(rocks[0], gp, x, y);
 
-        animation = new Animation(rocks, 5, 16, 0, randomDirection());
+        //Randomize rock type by generating random start index for animation
+        int startIndex = (int)(Math.random() * rocks.length / 16) * 16;
+
+        //Randomize animation speed 2-5
+        int animSpeed = (int)(Math.random() * 4) + 2;
+
+        //Create new animation
+        animation = new Animation(rocks, animSpeed, 16, startIndex, randomDirection());
     }
 
     //Will determine animation rotation
