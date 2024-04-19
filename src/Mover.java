@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.awt.Shape;
 
 abstract class Mover {
+    private final boolean displayHitbox = true;    //Used for debugging
+
     private int speed;              //Pixels/second?
     private int x, y;               //Position
     private int dX, dY;             //Velocity
@@ -175,7 +177,6 @@ abstract class Mover {
     //Sets entity sprite image
     public void setSprite(BufferedImage sprite) {
         this.sprite = sprite;
-        mask = createMask();
     }
 
     //Sets speed
@@ -214,8 +215,9 @@ abstract class Mover {
             brush.drawImage(op.filter(sprite, null), x, y, null);
         }
 
-        //Delete
-        brush.setColor(java.awt.Color.RED);
-        brush.draw(mask);
+        if(displayHitbox) {
+            brush.setColor(java.awt.Color.RED);
+            brush.draw(mask);
+        }
     }
 }
