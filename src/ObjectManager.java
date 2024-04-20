@@ -11,6 +11,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ObjectManager {
+    private enum ROCKSIZE {
+        LARGE,
+        MEDIUM,
+        SMALL
+    };
+    
     private ArrayList<Mover> friendly;
     private ArrayList<Mover> hostile;
     private ArrayList<Mover> delHostile;
@@ -81,7 +87,7 @@ public class ObjectManager {
         tickCounter++;
 
         if(tickCounter >= spawnRate) {
-            spawnRock(4, 0);
+            spawnRock(4, ROCKSIZE.SMALL);
             tickCounter = 0;
         }
 
@@ -107,17 +113,17 @@ public class ObjectManager {
     }
 
     //Spawn rock randomly within spawn range: (-100, 0) -> (-100, 500)
-    public void spawnRock(int quantity, int size) {
+    public void spawnRock(int quantity, ROCKSIZE size) {
         int originY, endY, originMaxY, originMinY, endMaxY, endMinY;
         int height, width;
         double m, dx, dy;
 
         switch (size) {
-            case 2:
+            case LARGE:
                 height = 240;
                 width = 320;
                 break;
-            case 1:
+            case MEDIUM:
                 height = 120;
                 width = 120;
                 break;
@@ -140,30 +146,22 @@ public class ObjectManager {
             //m = (y-y1) / (x-x1)
             m = (endY - originY) / ((800.0-width/2) - (-300.0-width/2));
 
-            //Rock size
-            switch (size) {
-                case 2:
-                    dx = rand.nextInt(2)+1;   //1-2 speed
-                    break;
-                case 1:
-                    dx = rand.nextInt(4)+2;   //2-5 speed
-                    break;
-                default:
-                    dx = rand.nextInt(5)+3;   //3-7 speed
-                    break;
-            }
-
-            dy = m * dx;
-
+            //Randomize speed based on size and create rock
             Rock rock;
             switch (size) {
-                case 2:
+                case LARGE:
+                    dx = rand.nextInt(2)+1;   //1-2 speed
+                    dy = m * dx;
                     rock = new Rock(largeRocks, gp, -300, originY);
                     break;
-                case 1:
+                case MEDIUM:
+                    dx = rand.nextInt(4)+2;   //2-5 speed
+                    dy = m * dx;
                     rock = new Rock(medRocks, gp, -300, originY);
                     break;
                 default:
+                    dx = rand.nextInt(5)+3;   //3-7 speed
+                    dy = m * dx;
                     rock = new Rock(smallRocks, gp, -300, originY);
                     break;
             }

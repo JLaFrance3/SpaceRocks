@@ -7,6 +7,7 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -17,14 +18,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
 import java.io.IOException;
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 public class ControlPanel extends JPanel{
-
     private final int WIDTH = 800;
     private final int HEIGHT = 200;
 
@@ -32,27 +30,28 @@ public class ControlPanel extends JPanel{
     private Boolean isPaused;
     private InputListener listener;
     private JToggleButton[] menuButtons;
-    private BufferedImage console;
-    private BufferedImage UI_SS;
-    private SpriteSheet UI;
 
+    private Menu menu;
+    private BufferedImage console;
+    private BufferedImage UI_Sheet;
+    private SpriteSheet UI_SS;
     private BufferedImage joystickBase;
     private BufferedImage joystick;
     private int stickUp, stickDown, stickPos;
-    
     private BufferedImage healthBar;
     private BufferedImage shieldBar;
     private BufferedImage healthDot;
     private BufferedImage shieldDot;
-    private ImageIcon[] icons;
-
+    private ImageIcon[] icons;              //onscreen menu icons
 
     public ControlPanel(InputHolder input, GamePanel gp) {
         //Initialize
         this.gPanel = gp;
-        this.listener = new InputListener(input);
-        this.icons = new ImageIcon[13];
         this.isPaused = false;
+        this.listener = new InputListener(this, input);
+        this.icons = new ImageIcon[14];
+        this.menuButtons = new JToggleButton[6];
+        this.menu = null;
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -62,9 +61,8 @@ public class ControlPanel extends JPanel{
         this.addMouseMotionListener(listener);
         this.setFocusable(true);
         this.requestFocus();
-
+        
         //UI
-        menuButtons = new JToggleButton[6];
         for(int i = 0; i < menuButtons.length; i++) {
             menuButtons[i] = new JToggleButton();
             menuButtons[i].setBounds(575+(35*i), 128, 30, 30);
@@ -72,64 +70,59 @@ public class ControlPanel extends JPanel{
         }
     }
 
-    public void init() {
-        BufferedImageLoader loader = new BufferedImageLoader();
+    public void init(Menu menu) {
+        this.menu = menu;
 
+        //Load images
+        BufferedImageLoader loader = new BufferedImageLoader();
         try {
             console = loader.load("res/Console.png");
-            UI_SS = loader.load("res/UISheet.png");
+            UI_Sheet = loader.load("res/UISheet.png");
         } catch(IOException e) {
             e.printStackTrace();
         }
 
         //Load onscreen joystick
-        UI = new SpriteSheet(UI_SS, 97, 97, 294, 60);
-        joystickBase = UI.getSprite(1, 1);
-        UI.setPointer(50, 50, 391, 60);
-        joystick = UI.getSprite(1, 1);
+        UI_SS = new SpriteSheet(UI_Sheet, 97, 97, 294, 60);
+        joystickBase = UI_SS.getSprite(1, 1);
+        UI_SS.setPointer(50, 50, 391, 60);
+        joystick = UI_SS.getSprite(1, 1);
         stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
         stickUp = stickPos - 20;
         stickDown = stickPos + 20;
 
         //Load bars
-        UI.setPointer(200, 50, 0, 60);
-        healthBar = UI.getSprite(1, 2);
-        shieldBar = UI.getSprite(1, 1);
+        UI_SS.setPointer(200, 50, 0, 60);
+        healthBar = UI_SS.getSprite(1, 2);
+        shieldBar = UI_SS.getSprite(1, 1);
 
         //Load fill dots for bars
-        UI.setPointer(13, 39, 200, 60);
-        healthDot = UI.getSprite(2, 1);
-        shieldDot = UI.getSprite(1, 1);
+        UI_SS.setPointer(13, 39, 200, 60);
+        healthDot = UI_SS.getSprite(2, 1);
+        shieldDot = UI_SS.getSprite(1, 1);
 
         //Load icons
-        UI.setPointer(30, 30, 0, 0);
+        UI_SS.setPointer(30, 30, 0, 0);
         for(int i = 0; i < icons.length; i++) {
             if (i <= 6) {
-                icons[i] = new ImageIcon((Image)UI.getSprite(i+1, 1));
+                icons[i] = new ImageIcon((Image)UI_SS.getSprite(i+1, 1));
             }
             else {
-                icons[i] = new ImageIcon((Image)UI.getSprite(i-6, 2));
+                icons[i] = new ImageIcon((Image)UI_SS.getSprite(i-6, 2));
             }
         }
 
         //Set icons to buttons and display
         for(int j = 0; j < menuButtons.length; j++) {
-            //The last button doesn't have a 'selected' icon
-            if(j == menuButtons.length - 1) {
-                menuButtons[j].setIcon(icons[j+1]);
-                this.add(menuButtons[j]);
-                break;
-            }
 
-            //Set icons and 'selected' icons for the first 5 buttons
             menuButtons[j].setIcon(icons[j]);
             this.add(menuButtons[j]);
             menuButtons[j].setSelectedIcon(icons[j+7]);
         }
     }
 
-    public void tick() {
-
+    public void focus() {
+        this.requestFocus();
     }
 
     public void paintComponent(Graphics g) {
@@ -151,14 +144,16 @@ public class ControlPanel extends JPanel{
         }
     }
     
-
     private class InputListener implements KeyListener, MouseListener, MouseMotionListener, ItemListener {
 
+        private ControlPanel panel;
         private InputHolder input;
         private Point clickPosition;
 
-        public InputListener(InputHolder input) {
+        public InputListener(ControlPanel p, InputHolder input) {
+            this.panel = p;
             this.input = input;
+            this.clickPosition = new Point(0, 0);
         }
 
         @Override
@@ -236,24 +231,42 @@ public class ControlPanel extends JPanel{
 
         @Override
         public void itemStateChanged(ItemEvent e) {
+
+            //Ship stats
             if (menuButtons[0].isSelected()) {
-                //TODO: ship stats
+                gPanel.pause();
+                menu.setState(Menu.STATE.STATS);
             }
-            if (menuButtons[1].isSelected()) {
-                //TODO: upgrade menu
+            //Upgrades
+            else if (menuButtons[1].isSelected()) {
+                gPanel.pause();
+                menu.setState(Menu.STATE.UPGRADE);
             }
-            if (menuButtons[2].isSelected()) {
-                //TODO: menu
+            //Menu
+            else if (menuButtons[2].isSelected()) {
+                gPanel.pause();
+                menu.setState(Menu.STATE.MAIN);
             }
+            //Help
+            else if (menuButtons[5].isSelected()) {
+                gPanel.pause();
+                menu.setState(Menu.STATE.HELP);
+            }
+            //No menu
+            else {
+                gPanel.unpause();
+                menu.setState(Menu.STATE.NONE);
+            }
+            //Music
             if (menuButtons[3].isSelected()) {
                 //TODO: music off
             }
+            //Sound
             if (menuButtons[4].isSelected()) {
                 //TODO: sounds off
             }
-            if (menuButtons[5].isSelected()) {
-                //TODO: help
-            }
+
+            panel.focus();
         }
 
         //Not implemented
