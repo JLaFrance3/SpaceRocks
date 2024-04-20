@@ -16,7 +16,6 @@ public class ObjectManager {
     private ArrayList<Mover> delHostile;
     private ArrayList<Mover> delFriendly;
     private GamePanel gp;
-    private ControlPanel cp;
     private Random rand;
 
     private SpriteSheet smallRockSS;
@@ -29,7 +28,7 @@ public class ObjectManager {
 
     private int tickCounter, spawnRate;
 
-    public ObjectManager(GamePanel gp, ControlPanel cp) {
+    public ObjectManager(GamePanel gp) {
         friendly = new ArrayList<Mover>();
         hostile = new ArrayList<Mover>();
         delHostile = new ArrayList<Mover>();
@@ -39,7 +38,6 @@ public class ObjectManager {
         spawnRate = 20;
 
         this.gp = gp;
-        this.cp = cp;
     }
 
     public void init() {
@@ -83,7 +81,7 @@ public class ObjectManager {
         tickCounter++;
 
         if(tickCounter >= spawnRate) {
-            spawnRock(1, 0);
+            spawnRock(4, 0);
             tickCounter = 0;
         }
 

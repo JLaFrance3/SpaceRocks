@@ -12,7 +12,8 @@ import java.awt.image.BufferedImage;
 import java.awt.Shape;
 
 abstract class Mover {
-    private final boolean displayHitbox = true;    //Used for debugging
+
+    private final boolean displayHitbox = false;    //Used for debugging
 
     private int speed;              //Pixels/second?
     private int x, y;               //Position
