@@ -7,8 +7,9 @@
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -16,72 +17,82 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class Menu extends JPanel implements ItemListener{
+public class Menu extends JPanel implements MouseListener{
     public static enum STATE {
         NONE,
         STATS,
         UPGRADE,
+        UPGRADE2,
+        PAUSE,
+        HELP,
         MAIN,
-        HELP
+        DIFFICULTY
     }
 
     private int menuIndex;
     private Rectangle[] menuBounds;
+    private Rectangle[] buttonMask;
     private STATE state;
+    private GameFrame game;
     private ControlPanel cPanel;
     private BufferedImage[] menuBackgrounds;
-    private ImageIcon[] menuIcons;
-    private JButton[] menuButtons;
 
     private BufferedImage currentBackground;
-    private SpriteSheet UI_SS;
-    private BufferedImage UI_Sheet;
 
-    public Menu(ControlPanel cp) {
+    public Menu(GameFrame game, ControlPanel cp) {
         //Initialize
         this.menuIndex = -1;
-        this.menuBounds = new Rectangle[4];
+        this.menuBounds = new Rectangle[7];
+        this.buttonMask = new Rectangle[14];
         this.state = STATE.NONE;
+        this.game = game;
         this.cPanel = cp;
-        this.menuBackgrounds = new BufferedImage[4];
-        this.menuIcons = new ImageIcon[5];
-        this.menuButtons = new JButton[5];
+        this.menuBackgrounds = new BufferedImage[7];
         this.currentBackground = null;
 
-        menuBounds[0] = new Rectangle(265, 10, 269, 400);
-        menuBounds[1] = new Rectangle(232, 10, 336, 500);
-        menuBounds[2] = new Rectangle(215, 10, 370, 500);
-        menuBounds[3] = new Rectangle(100, 10, 600, 498);
+        //Menu screens bounds for changing size of panel
+        menuBounds[0] = new Rectangle(200, 10, 394, 511);   //Pause menu
+        menuBounds[1] = new Rectangle(265, 10, 269, 400);   //Ship status menu
+        menuBounds[2] = new Rectangle(232, 10, 336, 500);   //Shop page 1
+        menuBounds[3] = new Rectangle(232, 10, 336, 500);   //Shop page 2
+        menuBounds[4] = new Rectangle(100, 10, 600, 498);   //Help panel
+        menuBounds[5] = new Rectangle(0, 0, 800, 600);      //Main menu
+        menuBounds[6] = new Rectangle(200, 10, 394, 511);   //Difficulty menu
+
+        //Button masks for now because they are a bit easier than JButtons
+        buttonMask[0] = new Rectangle(285, 110, 40, 40);    //Shop Page 1 selector 1
+        buttonMask[1] = new Rectangle(285, 230, 40, 40);    //Shop Page 1 selector 2
+        buttonMask[2] = new Rectangle(285, 350, 40, 40);    //Shop Page 1 selector 3
+        buttonMask[3] = new Rectangle(285, 445, 40, 40);    //Shop Page 1 Forward
+        buttonMask[4] = new Rectangle(285, 110, 40, 40);    //Shop Page 2 Selector 1
+        buttonMask[5] = new Rectangle(285, 230, 40, 40);    //Shop Page 2 Selector 2
+        buttonMask[6] = new Rectangle(11, 445, 40, 40);     //Shop Page 2 Back
+        buttonMask[7] = new Rectangle(47, 40, 300, 100);    //Pause Menu Restart
+        buttonMask[8] = new Rectangle(47, 200, 300, 100);   //Pause Menu MainMenu
+        buttonMask[9] = new Rectangle(47, 360, 300, 100);   //Pause Menu Exit
+        buttonMask[10] = new Rectangle(250, 400, 300, 100); //Main menu start button
+        buttonMask[11] = new Rectangle(47, 40, 300, 100);   //Difficulty Menu Easy
+        buttonMask[12] = new Rectangle(47, 200, 300, 100);  //Difficulty Menu Medium
+        buttonMask[13] = new Rectangle(47, 360, 300, 100);  //Difficulty Menu Hard
         
         //Panel preferences
         this.setLayout(null);
-
-        //UI
-        for(int i = 0; i < menuButtons.length; i++) {
-            menuButtons[i] = new JButton();
-            menuButtons[i].setSize(30, 30);
-            menuButtons[i].addItemListener(this);
-        }
-
+        this.addMouseListener(this);
     }
 
     public void init() {
         BufferedImageLoader loader = new BufferedImageLoader(); 
 
         try {
-            menuBackgrounds[0] = loader.load("res/ShipStats.png");
-            menuBackgrounds[1] = loader.load("res/ShipShop.png");
-            menuBackgrounds[2] = loader.load("res/Menu.png");
-            menuBackgrounds[3] = loader.load("res/Help.png");
-            UI_Sheet = loader.load("res/UISheet.png");
+            menuBackgrounds[0] = loader.load("res/Menu.png");
+            menuBackgrounds[1] = loader.load("res/ShipStats.png");
+            menuBackgrounds[2] = loader.load("res/Shop1.png");
+            menuBackgrounds[3] = loader.load("res/shop2.png");
+            menuBackgrounds[4] = loader.load("res/Help.png");
+            menuBackgrounds[5] = loader.load("res/StartBackground.png");
+            menuBackgrounds[6] = loader.load("res/Difficulty.png");
         } catch(IOException e) {
             e.printStackTrace();
-        }
-        
-        //Panel icons for use in menu panels
-        UI_SS = new SpriteSheet(UI_Sheet, 30, 30, 240, 0);
-        for(int k = 0; k < menuIcons.length; k++) {
-            menuIcons[k] = new ImageIcon((Image)UI_SS.getSprite(k+8, 1));
         }
     }
 
@@ -89,36 +100,42 @@ public class Menu extends JPanel implements ItemListener{
         this.state = s;
 
         switch (state) {
-            case NONE:
-                menuIndex = -1;
-                this.setVisible(false);
+            case PAUSE:
+                menuIndex = 0;
                 break;
             case STATS:
-                menuIndex = 0;
-                this.setBounds(menuBounds[0]);
-                this.setVisible(true);
+                menuIndex = 1;
                 break;
             case UPGRADE:
-                menuIndex = 1;
-                this.setBounds(menuBounds[1]);
-                this.setVisible(true);
-                break;
-            case MAIN:
                 menuIndex = 2;
-                this.setBounds(menuBounds[2]);
-                this.setVisible(true);
+                break;
+            case UPGRADE2:
+                menuIndex = 3;
                 break;
             case HELP:
-                menuIndex = 3;
-                this.setBounds(menuBounds[3]);
-                this.setVisible(true);
+                menuIndex = 4;
+                break;
+            case MAIN:
+                menuIndex = 5;
+                break;
+            case DIFFICULTY:
+                menuIndex = 6;
+                break;
+            default:
+                menuIndex = -1;
+                this.setVisible(false);
                 break;
         }
 
         if (menuIndex != -1) {
+            this.setBounds(menuBounds[menuIndex]);
             currentBackground = menuBackgrounds[menuIndex];
+            this.setVisible(true);
         }
-        
+    }
+
+    public STATE getState() {
+        return state;
     }
 
     @Override
@@ -129,22 +146,92 @@ public class Menu extends JPanel implements ItemListener{
     }
 
     @Override
-    public void itemStateChanged(ItemEvent e) {
-        //Left
-        if (menuButtons[0].isSelected()) {
-        }
-        //Right
-        if (menuButtons[1].isSelected()) {
-        }
-        //Close
-        if (menuButtons[2].isSelected()) {
-            //TODO: close menu
-        }
-        //Return
-        if (menuButtons[3].isSelected()) {
-        }
-        //Confirm
-        if (menuButtons[4].isSelected()) {
+    public void mousePressed(MouseEvent e) {
+
+        //Check if mouse click is within specified menu buttons
+        switch (state) {
+            case MAIN:
+                // Start button
+                if (buttonMask[10].contains(e.getPoint())) {
+                    setState(STATE.DIFFICULTY);
+                }
+                break;
+            case DIFFICULTY:
+                //Get difficulty setting
+                if (buttonMask[11].contains(e.getPoint())) {
+                    //TODO: Easy mode
+                    setState(STATE.NONE);
+                    game.startGame();
+                }
+                else if (buttonMask[12].contains(e.getPoint())) {
+                    //TODO: Medium mode
+                    setState(STATE.NONE);
+                    game.startGame();
+                }
+                else if (buttonMask[13].contains(e.getPoint())) {
+                    //TODO: Hard mode
+                    setState(STATE.NONE);
+                    game.startGame();
+                }
+                break;
+            case PAUSE:
+                //Get pause menu option
+                if (buttonMask[7].contains(e.getPoint())) {
+                    //TODO: Restart game
+                }
+                else if (buttonMask[8].contains(e.getPoint())) {
+                    //Main menu
+                    setState(STATE.MAIN);
+                }
+                else if (buttonMask[9].contains(e.getPoint())) {
+                    //Exit
+                    System.exit(0);
+                }
+                break;
+            case UPGRADE:
+                //Ship upgrade menu page 1
+                if (buttonMask[0].contains(e.getPoint())) {
+                    //TODO: Upgrade fire rate
+                }
+                else if (buttonMask[1].contains(e.getPoint())) {
+                    //TODO: Upgrade speed
+                }
+                else if (buttonMask[2].contains(e.getPoint())) {
+                    //TODO: Upgrade shield
+                }
+                else if (buttonMask[3].contains(e.getPoint())) {
+                    //Next page
+                    setState(STATE.UPGRADE2);
+                    repaint();
+                }
+                break;
+            case UPGRADE2:
+                //Ship upgrade menu page 2
+                if (buttonMask[4].contains(e.getPoint())) {
+                    //TODO: Upgrade health
+                }
+                else if (buttonMask[5].contains(e.getPoint())) {
+                    //TODO: Upgrade damage
+                }
+                else if (buttonMask[6].contains(e.getPoint())) {
+                    //Previous page
+                    setState((STATE.UPGRADE));
+                    repaint();
+                }
+                break;
         }
     }
+
+    //Unimplemented
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }

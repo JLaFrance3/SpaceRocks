@@ -67,10 +67,6 @@ public class GamePanel extends JPanel{
     }
 
     public void start() {
-        if(running) {
-            return;
-        }
-        
         running = true;
         timer.start();
     }

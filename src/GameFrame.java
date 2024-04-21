@@ -31,7 +31,7 @@ public class GameFrame extends JFrame{
         //Intialize main panels
         gPanel = new GamePanel(input);
         cPanel = new ControlPanel(input, gPanel);
-        mPanel = new Menu(cPanel);
+        mPanel = new Menu(this, cPanel);
 
         //Add Panels to layered pane
         gPanel.setBounds(0, 0, 800, 600);
@@ -58,6 +58,11 @@ public class GameFrame extends JFrame{
         this.setVisible(true);
         this.setLocationRelativeTo(null);
 
+        //Main Menu
+        mPanel.setState(Menu.STATE.MAIN);
+    }
+
+    public void startGame() {
         //Start game
         gPanel.start();
     }

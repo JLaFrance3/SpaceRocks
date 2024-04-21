@@ -7,7 +7,6 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -27,7 +26,6 @@ public class ControlPanel extends JPanel{
     private final int HEIGHT = 200;
 
     private GamePanel gPanel;
-    private Boolean isPaused;
     private InputListener listener;
     private JToggleButton[] menuButtons;
 
@@ -47,7 +45,6 @@ public class ControlPanel extends JPanel{
     public ControlPanel(InputHolder input, GamePanel gp) {
         //Initialize
         this.gPanel = gp;
-        this.isPaused = false;
         this.listener = new InputListener(this, input);
         this.icons = new ImageIcon[14];
         this.menuButtons = new JToggleButton[6];
@@ -178,13 +175,16 @@ public class ControlPanel extends JPanel{
                 case KeyEvent.VK_BACK_SPACE:
                 case KeyEvent.VK_ESCAPE:
                 case KeyEvent.VK_E:
-                    if (isPaused) {
-                        isPaused = false;
-                        gPanel.unpause();
-                    }
-                    else {
-                        isPaused = true;
-                        gPanel.pause();
+                    if (!(menu.getState() == Menu.STATE.MAIN)) {
+                        if(menu.getState() == Menu.STATE.NONE) {
+                            menuButtons[2].setSelected(true);
+                        }
+                        else {
+                            menuButtons[0].setSelected(false);
+                            menuButtons[1].setSelected(false);
+                            menuButtons[2].setSelected(false);
+                            menuButtons[5].setSelected(false);
+                        }
                     }
                     break;
             }
@@ -232,38 +232,40 @@ public class ControlPanel extends JPanel{
         @Override
         public void itemStateChanged(ItemEvent e) {
 
-            //Ship stats
-            if (menuButtons[0].isSelected()) {
+            //Pause menu
+            if (menuButtons[2].isSelected()) {
                 gPanel.pause();
-                menu.setState(Menu.STATE.STATS);
+                menu.setState(Menu.STATE.PAUSE);
             }
-            //Upgrades
+            //Upgrades menu
             else if (menuButtons[1].isSelected()) {
                 gPanel.pause();
                 menu.setState(Menu.STATE.UPGRADE);
             }
-            //Menu
-            else if (menuButtons[2].isSelected()) {
+            //Ship stats panel
+            else if (menuButtons[0].isSelected()) {
                 gPanel.pause();
-                menu.setState(Menu.STATE.MAIN);
+                menu.setState(Menu.STATE.STATS);
             }
-            //Help
+            //Help panel
             else if (menuButtons[5].isSelected()) {
                 gPanel.pause();
                 menu.setState(Menu.STATE.HELP);
             }
             //No menu
             else {
-                gPanel.unpause();
-                menu.setState(Menu.STATE.NONE);
+                if (!(menu.getState() == Menu.STATE.MAIN)) {
+                    gPanel.unpause();
+                    menu.setState(Menu.STATE.NONE);
+                }
             }
-            //Music
+            //Music toggle
             if (menuButtons[3].isSelected()) {
-                //TODO: music off
+                //TODO: music toggle
             }
-            //Sound
+            //Sound toggle
             if (menuButtons[4].isSelected()) {
-                //TODO: sounds off
+                //TODO: sounds toggle
             }
 
             panel.focus();
