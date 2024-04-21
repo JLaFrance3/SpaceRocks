@@ -21,7 +21,6 @@ public class GamePanel extends JPanel{
     private final int HEIGHT = 450;
 
     private boolean running = false;
-    private ControlPanel cPanel;
     private Timer timer;
     private InputHolder input;
 
@@ -32,13 +31,12 @@ public class GamePanel extends JPanel{
 
     private ObjectManager manager;
 
-    public GamePanel(InputHolder input, ControlPanel panel) {
+    public GamePanel(InputHolder input) {
         //Initialize
         this.input = input;
         running = false;
-        this.cPanel = panel;
         timer = new Timer(DELAY, new ClockListener());
-        manager = new ObjectManager(this, cPanel);
+        manager = new ObjectManager(this);
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -69,17 +67,12 @@ public class GamePanel extends JPanel{
     }
 
     public void start() {
-        if(running) {
-            return;
-        }
-        
         running = true;
         timer.start();
     }
 
     public void tick() {
         manager.tick();
-        cPanel.tick();
 
         repaint();
     }
@@ -98,7 +91,7 @@ public class GamePanel extends JPanel{
     }
 
     public void unpause() {
-        
+        timer.start();
     }
 
     public ObjectManager getObjectManager() {

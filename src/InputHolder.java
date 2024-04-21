@@ -6,7 +6,6 @@
  *      '-' - No input
  *      'w' - Up
  *      's' - Down
- *      'e' - Pause
  *      ' ' - Shoot
  */
 
