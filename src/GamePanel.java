@@ -33,10 +33,14 @@ public class GamePanel extends JPanel{
 
     public GamePanel(InputHolder input) {
         //Initialize
+        this.running = false;
+        this.timer = new Timer(DELAY, new ClockListener());
         this.input = input;
-        running = false;
-        timer = new Timer(DELAY, new ClockListener());
-        manager = new ObjectManager(this);
+        this.background = null;
+        this.ships = null;
+        this.lasers = null;
+        this.player = null;
+        this.manager = new ObjectManager(this);
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -92,6 +96,11 @@ public class GamePanel extends JPanel{
 
     public void unpause() {
         timer.start();
+    }
+
+    //Set difficulty
+    public void setDifficulty(int difficulty) {
+        manager.setDifficulty(difficulty);
     }
 
     public ObjectManager getObjectManager() {

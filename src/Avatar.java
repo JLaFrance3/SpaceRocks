@@ -18,7 +18,7 @@ public class Avatar extends Ship{
         super(sprite, gp, 725, 200, -90);
 
         this.input = input;
-        this.fireRate = .05;
+        this.fireRate = .03;
         this.fireCount = 0;
     }
 

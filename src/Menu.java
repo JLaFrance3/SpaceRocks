@@ -5,16 +5,11 @@
  */
 
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class Menu extends JPanel implements MouseListener{
@@ -159,17 +154,20 @@ public class Menu extends JPanel implements MouseListener{
             case DIFFICULTY:
                 //Get difficulty setting
                 if (buttonMask[11].contains(e.getPoint())) {
-                    //TODO: Easy mode
+                    //Easy
+                    cPanel.setDifficulty(0);
                     setState(STATE.NONE);
                     game.startGame();
                 }
                 else if (buttonMask[12].contains(e.getPoint())) {
-                    //TODO: Medium mode
+                    //Medium
+                    cPanel.setDifficulty(1);
                     setState(STATE.NONE);
                     game.startGame();
                 }
                 else if (buttonMask[13].contains(e.getPoint())) {
-                    //TODO: Hard mode
+                    //Hard
+                    cPanel.setDifficulty(2);
                     setState(STATE.NONE);
                     game.startGame();
                 }

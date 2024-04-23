@@ -118,6 +118,11 @@ public class ControlPanel extends JPanel{
         }
     }
 
+    //Set difficulty
+    public void setDifficulty(int difficulty) {
+        gPanel.setDifficulty(difficulty);
+    }
+
     public void focus() {
         this.requestFocus();
     }
