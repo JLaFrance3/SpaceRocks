@@ -4,6 +4,7 @@
  * JPanel used to collect and pass user inputs to game
  */
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -111,7 +112,8 @@ public class ControlPanel extends JPanel{
 
         //Set icons to buttons and display
         for(int j = 0; j < menuButtons.length; j++) {
-
+            menuButtons[j].setBackground(new Color(0, 0, 0, 0));
+            menuButtons[j].setBorderPainted(false);
             menuButtons[j].setIcon(icons[j]);
             this.add(menuButtons[j]);
             menuButtons[j].setSelectedIcon(icons[j+7]);
