@@ -59,19 +59,19 @@ abstract class Mover {
 
     //Constructor with position/rotation
     public Mover(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
-        speed = 10;
-        damage = 50;
+        this.speed = 6;
+        this.damage = 50;
 
         this.x = x;
         this.y = y;
-        dX = 0;
-        dY = 0;
+        this.dX = 0;
+        this.dY = 0;
 
         this.rotation = rotation;
         this.sprite = sprite;
         this.gp = gp;
 
-        mask = createMask();
+        this.mask = createMask();
     }
 
     //Abstract methods

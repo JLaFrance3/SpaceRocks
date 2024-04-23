@@ -8,17 +8,12 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class ObjectManager {
-    private enum ROCKSIZE {
-        LARGE,
-        MEDIUM,
-        SMALL
-    };
-    
-    private ArrayList<Mover> friendly;
-    private ArrayList<Mover> hostile;
+    private ArrayList<Mover> friendly;              //Friendly movers(playeravatar, projectiles)
+    private ArrayList<Mover> hostile;               //Hostile movers(rocks, enemies, projectiles)
     private ArrayList<Mover> delHostile;
     private ArrayList<Mover> delFriendly;
     private GamePanel gp;
@@ -32,18 +27,25 @@ public class ObjectManager {
     private BufferedImage[] medRocks;
     private BufferedImage[] largeRocks;
 
-    private int tickCounter, spawnRate;
+    private int tickCounter, spawnRate, difficulty;
+    private int[] rockValue;                        //Used in wave spawn and scoring
+    private double[] rockWeight;                    //probabalistic weight of rock spawn
+    private int waveMaxValue, waveValue;
 
     public ObjectManager(GamePanel gp) {
-        friendly = new ArrayList<Mover>();
-        hostile = new ArrayList<Mover>();
-        delHostile = new ArrayList<Mover>();
-        delFriendly = new ArrayList<Mover>();
-        rand = new Random();
-        tickCounter = 0;
-        spawnRate = 20;
-
+        this.friendly = new ArrayList<Mover>();
+        this.hostile = new ArrayList<Mover>();
+        this.delHostile = new ArrayList<Mover>();
+        this.delFriendly = new ArrayList<Mover>();
         this.gp = gp;
+        this.rand = new Random();
+        this.tickCounter = 0;
+        this.spawnRate = 0;
+        this.difficulty = 0;
+        this.rockValue = new int[]{1, 2, 5};
+        this.rockWeight = new double[3];
+        this.waveMaxValue = 0;
+        this.waveValue = 0;
     }
 
     public void init() {
@@ -84,19 +86,40 @@ public class ObjectManager {
 
     public void tick() {
 
-        tickCounter++;
+        if (waveValue < waveMaxValue) {
+            tickCounter++;
 
-        if(tickCounter >= spawnRate) {
-            spawnRock(4, ROCKSIZE.SMALL);
-            tickCounter = 0;
+            if(tickCounter >= spawnRate) {
+                int rockIndex = 0;
+
+                for(double r = Math.random(); rockIndex < rockWeight.length; rockIndex++) {
+                    r -= rockWeight[rockIndex];
+                    if (r <= 0) {
+                        break;
+                    }
+                }
+                
+                spawnRock(1, rockIndex);
+
+                tickCounter = 0;
+                waveValue += rockValue[rockIndex];
+                System.out.println(waveValue);
+            }
         }
 
         //Check out of bounds
         removeOOB();
         
+        //Friendly object collision detection
         for(Mover m : friendly) {
-            if (checkFriendlyCollision(m)) {
+            ArrayList<Mover> collisions = new ArrayList<Mover>();
+            collisions.addAll(checkCollision(m));
+
+            if (!collisions.isEmpty()) {
                 delFriendly.add(m);
+                for(Mover h : collisions) {
+                    delHostile.add(h);
+                }
                 //TODO: explosion
                 if (m instanceof Avatar) {
                     //TODO: Game over
@@ -104,26 +127,21 @@ public class ObjectManager {
                 }
             }
         }
-        for(Mover m : hostile) {
-            if (checkHostileCollision(m)) {
-                delHostile.add(m);
-                //TODO: explosion
-            }
-        }
     }
 
     //Spawn rock randomly within spawn range: (-100, 0) -> (-100, 500)
-    public void spawnRock(int quantity, ROCKSIZE size) {
+    public void spawnRock(int quantity, int size) {
         int originY, endY, originMaxY, originMinY, endMaxY, endMinY;
         int height, width;
         double m, dx, dy;
 
+        //Rock size used in origin and end point randomization
         switch (size) {
-            case LARGE:
+            case 2:
                 height = 240;
                 width = 320;
                 break;
-            case MEDIUM:
+            case 1:
                 height = 120;
                 width = 120;
                 break;
@@ -133,6 +151,7 @@ public class ObjectManager {
                 break;
         }
 
+        //Maximum origin and end Y values
         originMaxY = 480 - height/2;
         originMinY = -30 - height/2;
         endMaxY = 450 - height/2;
@@ -149,12 +168,12 @@ public class ObjectManager {
             //Randomize speed based on size and create rock
             Rock rock;
             switch (size) {
-                case LARGE:
+                case 2:
                     dx = rand.nextInt(2)+1;   //1-2 speed
                     dy = m * dx;
                     rock = new Rock(largeRocks, gp, -300, originY);
                     break;
-                case MEDIUM:
+                case 1:
                     dx = rand.nextInt(4)+2;   //2-5 speed
                     dy = m * dx;
                     rock = new Rock(medRocks, gp, -300, originY);
@@ -173,26 +192,12 @@ public class ObjectManager {
         }
     }
 
-    private Boolean checkFriendlyCollision(Mover mover) {
-        Boolean collision = false;
+    private ArrayList<Mover> checkCollision(Mover mover) {
+        ArrayList<Mover> collision = new ArrayList<Mover>();
 
         for(Mover m : hostile) {
             if (mover.getMask().intersects(m.getMask())) {
-                collision = true;
-                break;
-            }
-        }
-
-        return collision;
-    }
-
-    private Boolean checkHostileCollision(Mover mover) {
-        Boolean collision = false;
-
-        for(Mover m : friendly) {
-            if (mover.getMask().intersects(m.getMask())) {
-                collision = true;
-                break;
+                collision.add(m);
             }
         }
 
@@ -229,6 +234,63 @@ public class ObjectManager {
 
         friendly.removeAll(delFriendly);
         hostile.removeAll(delHostile);
+    }
+
+    //Increase difficulty, start next wave
+    public void nextWave(double[] weightIncrease) {
+        for(int i = 0; i < rockWeight.length; i++) {
+            rockWeight[i] += weightIncrease[i];
+        }
+
+        waveValue = 0;
+    }
+    
+    //Increase difficulty, start next wave
+    public void nextWave(double[] weightIncrease, int waveIncrease) {
+        for(int i = 0; i < rockWeight.length; i++) {
+            rockWeight[i] += weightIncrease[i];
+        }
+
+        waveMaxValue += waveIncrease;
+        waveValue = 0;
+    }
+
+    //Set difficulty
+    public void setDifficulty(int difficulty) {
+        double[] weight = new double[3];
+        this.difficulty = difficulty;
+
+        //Set probabalistic weights for rocks spawns based on difficulty
+        switch (difficulty) {
+            case 2:
+                //Hard
+                weight[0] = 0.88;
+                weight[1] = 0.09;
+                weight[2] = 0.03;
+                spawnRate = 5;
+                waveMaxValue = 260;
+                break;
+            case 1:
+                //Medium
+                weight[0] = 0.92;
+                weight[1] = 0.07;
+                weight[2] = 0.01;
+                spawnRate = 10;
+                waveMaxValue = 160;
+                break;
+            default:
+                //Easy
+                weight[0] = 0.95;
+                weight[1] = 0.05;
+                weight[2] = 0.00;
+                spawnRate = 15;
+                waveMaxValue = 60;
+                break;
+        }
+
+        rockWeight[0] = weight[0];
+        rockWeight[1] = weight[1];
+        rockWeight[2] = weight[2];
     }
 
     public void addHostile(Mover m) {
