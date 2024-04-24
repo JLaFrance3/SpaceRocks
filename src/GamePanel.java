@@ -20,6 +20,7 @@ public class GamePanel extends JPanel{
     private Timer timer;                        //Game timer
     private InputHolder input;                  //Holds user input to control player avatar
     private Menu menu;                          //Menu responsible for displaying correct screens
+    private ControlPanel cp;                    //Main control panel
 
     private BufferedImage background;           //Current background image
     private SpriteSheet ships;                  //Image containg all ships
@@ -33,6 +34,7 @@ public class GamePanel extends JPanel{
         this.timer = new Timer(DELAY, new ClockListener());
         this.input = input;
         this.menu = null;
+        this.cp = null;
         this.background = null;
         this.ships = null;
         this.lasers = null;
@@ -41,12 +43,13 @@ public class GamePanel extends JPanel{
     }
 
     //Initialize
-    public void init(Menu menu) {
+    public void init(Menu menu, ControlPanel cp) {
         BufferedImageLoader loader = new BufferedImageLoader();
         BufferedImage shipSS;
         BufferedImage projectileSS;
 
         this.menu = menu;
+        this.cp = cp;
 
         manager.init();
 
@@ -75,6 +78,7 @@ public class GamePanel extends JPanel{
     //Game clock
     public void tick() {
         manager.tick();
+        cp.tick();
 
         repaint();
     }
@@ -82,6 +86,7 @@ public class GamePanel extends JPanel{
     //Game over screen
     public void gameover() {
         pause();
+        menu.setScore(getScore());
 
         menu.setState(Menu.STATE.GAMEOVER);
     }
@@ -110,6 +115,10 @@ public class GamePanel extends JPanel{
 
     public ObjectManager getObjectManager() {
         return manager;
+    }
+
+    public int getScore() {
+        return manager.getScore();
     }
 
     public void pause() {

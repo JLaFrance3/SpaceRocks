@@ -9,15 +9,17 @@ import java.awt.image.BufferedImage;
 
 public class Rock extends Mover {
 
-    Animation animation;    //Sprite animation
+    private Animation animation;    //Sprite animation
+    private int type;
     
-    public Rock(BufferedImage[] rocks, GamePanel gp) {
+    public Rock(BufferedImage[] rocks, GamePanel gp, int type) {
         super(rocks[0], gp, 100, 100);
 
-        animation = new Animation(rocks, 5, 16, 0, randomDirection());
+        this.animation = new Animation(rocks, 5, 16, 0, randomDirection());
+        this.type = type;
     }
 
-    public Rock(BufferedImage[] rocks, GamePanel gp, int x, int y) {
+    public Rock(BufferedImage[] rocks, GamePanel gp, int x, int y, int type) {
         super(rocks[0], gp, x, y);
 
         //Randomize rock type by generating random start index for animation
@@ -28,6 +30,7 @@ public class Rock extends Mover {
 
         //Create new animation
         animation = new Animation(rocks, animSpeed, 16, startIndex, randomDirection());
+        this.type = type;
     }
 
     //Will determine animation rotation
@@ -55,4 +58,7 @@ public class Rock extends Mover {
         super.paint(brush, getRotation());
     }
 
+    public int getType() {
+        return type;
+    }
 }

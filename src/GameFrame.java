@@ -50,8 +50,8 @@ public class GameFrame extends JFrame{
 
         //Initialize panels
         mPanel.init();
-        gPanel.init(mPanel);
         cPanel.init(mPanel);
+        gPanel.init(mPanel, cPanel);
 
         //Show frame
         this.pack();

@@ -6,11 +6,16 @@
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class Menu extends JPanel implements MouseListener{
 
@@ -35,6 +40,7 @@ public class Menu extends JPanel implements MouseListener{
     private ControlPanel cPanel;                //Main control panel
     private BufferedImage[] menuBackgrounds;    //Individual popup menu backgrounds
     private BufferedImage currentBackground;    //Current menu background
+    private JLabel scoreLabel;                  //Displays score at end of game
 
     public Menu(GameFrame game, ControlPanel cp) {
         //Initialize
@@ -46,6 +52,15 @@ public class Menu extends JPanel implements MouseListener{
         this.cPanel = cp;
         this.menuBackgrounds = new BufferedImage[8];
         this.currentBackground = null;
+        this.scoreLabel = new JLabel("SCORE: 0", SwingConstants.CENTER);
+
+        //Score label settings
+        scoreLabel.setBounds(100, 310, 194, 20);
+        scoreLabel.setBackground(new Color(0, 0, 0, 0));
+        scoreLabel.setFont(new Font("Symbol-Bold", Font.BOLD, 24));
+        scoreLabel.setForeground(Color.BLACK);
+        scoreLabel.setVisible(false);
+        this.add(scoreLabel);
 
         //Menu screens bounds for changing size of panel
         menuBounds[0] = new Rectangle(200, 10, 394, 511);   //Pause menu
@@ -119,12 +134,14 @@ public class Menu extends JPanel implements MouseListener{
                 break;
             case MAIN:
                 menuIndex = 5;
+                scoreLabel.setVisible(false);
                 break;
             case DIFFICULTY:
                 menuIndex = 6;
                 break;
             case GAMEOVER:
                 menuIndex = 7;
+                scoreLabel.setVisible(true);
                 break;
             default:
                 menuIndex = -1;
@@ -238,6 +255,10 @@ public class Menu extends JPanel implements MouseListener{
                 break;
         }
         repaint();
+    }
+
+    public void setScore(int score) {
+        scoreLabel.setText("SCORE: " + score);
     }
 
     public void startGame() {
