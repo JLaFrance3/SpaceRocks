@@ -49,8 +49,8 @@ public class GameFrame extends JFrame{
         this.setResizable(false);
 
         //Initialize panels
-        gPanel.init();
         mPanel.init();
+        gPanel.init(mPanel);
         cPanel.init(mPanel);
 
         //Show frame
@@ -65,5 +65,10 @@ public class GameFrame extends JFrame{
     public void startGame() {
         //Start game
         gPanel.start();
+    }
+
+    public void reset() {
+        gPanel.reset();
+        cPanel.reset();
     }
 }

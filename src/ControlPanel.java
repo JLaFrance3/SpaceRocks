@@ -129,6 +129,17 @@ public class ControlPanel extends JPanel{
         this.requestFocus();
     }
 
+    //Reset to initial values
+    public void reset() {
+        menuButtons[0].setSelected(false);
+        menuButtons[1].setSelected(false);
+        menuButtons[2].setSelected(false);
+        menuButtons[5].setSelected(false);
+        stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
+
+        //TODO: Health/shield bars
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 

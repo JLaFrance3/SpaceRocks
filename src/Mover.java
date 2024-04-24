@@ -26,59 +26,60 @@ abstract class Mover {
     private GamePanel gp;           //Panel
 
     public Mover(BufferedImage sprite, GamePanel gp) {
-        speed = 20;
-        damage = 10;
-        rotation = 0;
-        x = 100;
-        y = 100;
-        dX = 0;
-        dY = 0;
+        this.speed = 20;
+        this.x = 100;
+        this.y = 100;
+        this.dX = 0;
+        this.dY = 0;
+        this.rotation = 0;
+        this.damage = 10;
+        this.mask = null;
 
         this.sprite = sprite;
         this.gp = gp;
 
-        mask = createMask();
+        createMask();
     }
 
     //Constructor with position
     public Mover(BufferedImage sprite, GamePanel gp, int x, int y) {
-        rotation = 0;
-        speed = 5;
-        damage = 50;
-
+        this.speed = 5;
         this.x = x;
         this.y = y;
         this.dX = 0;
         this.dY = 0;
+        this.rotation = 0;
+        this.damage = 50;
+        this.mask = null;
 
         this.sprite = sprite;
         this.gp = gp;
 
-        mask = createMask();
+        createMask();
     }
 
     //Constructor with position/rotation
     public Mover(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
         this.speed = 6;
-        this.damage = 50;
-
         this.x = x;
         this.y = y;
         this.dX = 0;
         this.dY = 0;
+        this.damage = 50;
+        this.mask = null;
 
         this.rotation = rotation;
         this.sprite = sprite;
         this.gp = gp;
 
-        this.mask = createMask();
+        createMask();
     }
 
     //Abstract methods
     abstract void paint(Graphics2D brush);
 
     //Creates rectangle based on RGB values for mask
-    private Rectangle createMask() {
+    public void createMask() {
         Shape s;
         int width = sprite.getWidth();
         int height = sprite.getHeight();
@@ -103,7 +104,7 @@ abstract class Mover {
         s = at.createTransformedShape(r);
         r = s.getBounds();
 
-        return r;
+        this.mask = r;
     }
 
     //Game tick
@@ -172,7 +173,7 @@ abstract class Mover {
     //Sets entity rotation value
     public void setRotation(int rotation) {
         this.rotation = rotation;
-        mask = createMask();
+        createMask();
     }
 
     //Sets entity sprite image

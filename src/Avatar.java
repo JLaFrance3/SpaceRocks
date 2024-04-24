@@ -9,17 +9,29 @@ import java.awt.image.BufferedImage;
 
 public class Avatar extends Ship{
 
+    private static final double initialFireRate = 0.03;
+    private static final int initialHealth = 100;
+    private static final int initialShield = 0;
+    private static final int initialSpeed = 6;
+    private static final int initialDamage = 50;
+    private static final int initialX = 725, initialY = 200;
+
     private InputHolder input;
     private double fireRate;    //Limit fire rate with increment
     private double fireCount;
 
     //Player avatar constructor
     public Avatar(BufferedImage sprite, GamePanel gp, InputHolder input) {
-        super(sprite, gp, 725, 200, -90);
+        super(sprite, gp, initialX, initialY, -90);
 
         this.input = input;
-        this.fireRate = .03;
+        this.fireRate = initialFireRate;
         this.fireCount = 0;
+
+        setHealth(initialHealth);
+        setshield(initialShield);
+        setSpeed(initialSpeed);
+        setDamage(initialDamage);
     }
 
     public void tick() {
@@ -50,6 +62,21 @@ public class Avatar extends Ship{
         super.tick();
 
         setDY(0);
+    }
+
+    //Reset to initial values
+    public void reset() {
+        this.fireRate = initialFireRate;
+        this.fireCount = 0;
+        setHealth(initialHealth);
+        setshield(initialShield);
+        setSpeed(initialSpeed);
+        setDamage(initialDamage);
+        setDX(0);
+        setDY(0);
+        setLocation(initialX, initialY);
+
+        super.createMask();
     }
 
     //Returns rate of fire multiplier

@@ -23,6 +23,7 @@ public class GamePanel extends JPanel{
     private boolean running = false;
     private Timer timer;
     private InputHolder input;
+    private Menu menu;
 
     private BufferedImage background;
     private SpriteSheet ships;
@@ -36,6 +37,7 @@ public class GamePanel extends JPanel{
         this.running = false;
         this.timer = new Timer(DELAY, new ClockListener());
         this.input = input;
+        this.menu = null;
         this.background = null;
         this.ships = null;
         this.lasers = null;
@@ -46,10 +48,12 @@ public class GamePanel extends JPanel{
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
     }
 
-    public void init() {
+    public void init(Menu menu) {
         BufferedImageLoader loader = new BufferedImageLoader();
         BufferedImage shipSS;
         BufferedImage projectileSS;
+
+        this.menu = menu;
 
         manager.init();
 
@@ -81,21 +85,28 @@ public class GamePanel extends JPanel{
         repaint();
     }
 
-    public void end() {
-        if(!running) {
-            return;
-        }
-
+    public void gameover() {
         running = false;
-        timer.stop();
+        pause();
+
+        menu.setState(Menu.STATE.GAMEOVER);
     }
 
-    public void pause() {
-        timer.stop();
-    }
+    public void reset() {
+        player.setSprite(ships.getSprite(1, 1));
+        input.clear();
+        player.reset();
+        manager.reset();
+        manager.addFriendly(player);
 
-    public void unpause() {
-        timer.start();
+        if (menu.getState() == Menu.STATE.MAIN) {
+            running = false;
+            pause();
+        }
+        else {
+            menu.setState(Menu.STATE.NONE);
+        }
+        repaint();
     }
 
     //Set difficulty
@@ -105,6 +116,14 @@ public class GamePanel extends JPanel{
 
     public ObjectManager getObjectManager() {
         return manager;
+    }
+
+    public void pause() {
+        timer.stop();
+    }
+
+    public void unpause() {
+        timer.start();
     }
 
     @Override
