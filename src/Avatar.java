@@ -25,6 +25,7 @@ public class Avatar extends Ship{
     private static final int DAMAGE_INCREMENT = 20;
 
     private SpriteSheet ships;      //Holds all ships
+    private SpriteSheet lasers;     //Holds all lasers
     private int[] upgradeCounter;   //Counts individual stat upgrades to upgrade ship at threshold
     private InputHolder input;      //Holds control issued by control panel
     private double fireRate;        //Limit fire rate with increment
@@ -32,10 +33,11 @@ public class Avatar extends Ship{
     private int shipTier;           //Used in determining current ship sprite
 
     //Player avatar constructor
-    public Avatar(SpriteSheet ships, BufferedImage sprite, GamePanel gp, InputHolder input) {
+    public Avatar(SpriteSheet ships, SpriteSheet lasers, BufferedImage sprite, GamePanel gp, InputHolder input) {
         super(sprite, gp, INITIAL_X, INITIAL_Y, -90);
 
         this.ships = ships;
+        this.lasers = lasers;
         this.upgradeCounter = new int[] {0, 0, 0, 0, 0};
         this.input = input;
         this.fireRate = INITIAL_FIRE_RATE;
@@ -46,6 +48,7 @@ public class Avatar extends Ship{
         setshield(INITIAL_SHIELD);
         setSpeed(INITIAL_SPEED);
         setDamage(INITIAL_DAMAGE);
+        setProjectileSprite(lasers.getSprite(1, 1));
     }
 
     //Game tick
@@ -177,9 +180,41 @@ public class Avatar extends Ship{
                     shipTier++;
                 }
                 break;
-
-            //TODO: Projectile sprite upgrades
         } 
+
+        //Projectile sprite upgrade
+        if (shipTier == 5) {
+            lasers.setPointer(42, 68, 0, 90);
+            setProjectileSprite(lasers.getSprite(5, 1));
+        }
+        else {
+            //Turret style projectile
+            if (upgradeCounter[0] > upgradeCounter[4]) {
+                lasers.setPointer(50, 90, 0, 0);
+                switch (upgradeCounter[0]) {
+                    //TODO: Flip sprite
+                    //TODO: Decrease Y value sprite position
+                    //TODO: Increase fire rate and decrease damage?
+                    case 1 -> setProjectileSprite(lasers.getSprite(1, 1));
+                    case 2 -> setProjectileSprite(lasers.getSprite(2, 1));
+                    case 3 -> setProjectileSprite(lasers.getSprite(3, 1));
+                    case 4 -> setProjectileSprite(lasers.getSprite(4, 1));
+                    case 5 -> setProjectileSprite(lasers.getSprite(6, 1));
+                    case 6 -> setProjectileSprite(lasers.getSprite(5, 1));
+                }
+            }
+            //Beam style projectile
+            else {
+                lasers.setPointer(42, 68, 0, 90);
+                switch (upgradeCounter[4]) {
+                    case 2 -> setProjectileSprite(lasers.getSprite(2, 1));
+                    case 3 -> setProjectileSprite(lasers.getSprite(3, 1));
+                    case 4 -> setProjectileSprite(lasers.getSprite(4, 1));
+                    case 5 -> setProjectileSprite(lasers.getSprite(6, 1));
+                    case 6 -> setProjectileSprite(lasers.getSprite(7, 1));
+                }
+            }
+        }
     }
 
     //Ship upgrades selected in menu increase by static increment

@@ -59,11 +59,10 @@ public class GamePanel extends JPanel{
             projectileSS = loader.load("res/ProjectileSheet.png");
 
             ships = new SpriteSheet(shipSS, 59, 47);
-            player = new Avatar(ships, ships.getSprite(1, 1), this, input);
-            manager.addFriendly(player);
-
             lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
-            player.setProjectileSprite(lasers.getSprite(1, 1));
+
+            player = new Avatar(ships, lasers, ships.getSprite(1, 1), this, input);
+            manager.addFriendly(player);
         } 
         catch (IOException e) {
             e.printStackTrace();

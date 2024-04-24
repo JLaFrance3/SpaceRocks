@@ -20,6 +20,7 @@ abstract class Ship extends Mover{
         
         health = 100;
         shield = 0;
+        projectileSprite = null;
     }
 
     //Abstract methods
