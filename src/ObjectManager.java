@@ -119,7 +119,7 @@ public class ObjectManager {
                 }
                 
                 //Make rock
-                // spawnRock(1, rockIndex);
+                spawnRock(1, rockIndex);
 
                 //Add rock value to current wave total value
                 waveValue += rockValue[rockIndex];

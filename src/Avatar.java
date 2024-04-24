@@ -14,7 +14,7 @@ public class Avatar extends Ship{
     private static final int INITIAL_HEALTH = 100;
     private static final int INITIAL_SHIELD = 0;
     private static final int INITIAL_SPEED = 5;
-    private static final int INITIAL_DAMAGE = 50;
+    private static final int INITIAL_DAMAGE = 30;
     private static final int INITIAL_X = 725, INITIAL_Y = 200;
 
     //Stat upgrade values
@@ -24,13 +24,14 @@ public class Avatar extends Ship{
     private static final int SPEED_INCREMENT = 1;
     private static final int DAMAGE_INCREMENT = 20;
 
-    private SpriteSheet ships;      //Holds all ships
-    private SpriteSheet lasers;     //Holds all lasers
-    private int[] upgradeCounter;   //Counts individual stat upgrades to upgrade ship at threshold
-    private InputHolder input;      //Holds control issued by control panel
-    private double fireRate;        //Limit fire rate with increment
-    private double fireCount;       //Counter
-    private int shipTier;           //Used in determining current ship sprite
+    private SpriteSheet ships;          //Holds all ships
+    private SpriteSheet lasers;         //Holds all lasers
+    private int[] upgradeCounter;       //Counts individual stat upgrades to upgrade ship at threshold
+    private InputHolder input;          //Holds control issued by control panel
+    private double fireRate;            //Limit fire rate with increment
+    private double fireCount;           //Counter
+    private int shipTier;               //Used in determining current ship sprite
+    private boolean isBeamProjectile;   //Projectile type: beam or turret. Based on stat upgrades
 
     //Player avatar constructor
     public Avatar(SpriteSheet ships, SpriteSheet lasers, BufferedImage sprite, GamePanel gp, InputHolder input) {
@@ -43,6 +44,7 @@ public class Avatar extends Ship{
         this.fireRate = INITIAL_FIRE_RATE;
         this.fireCount = 0;
         this.shipTier = 1;
+        isBeamProjectile = true;
 
         setHealth(INITIAL_HEALTH);
         setshield(INITIAL_SHIELD);
@@ -92,6 +94,7 @@ public class Avatar extends Ship{
         this.fireRate = INITIAL_FIRE_RATE;
         this.fireCount = 0;
         this.shipTier = 1;
+        isBeamProjectile = true;
         setSprite(ships.getSprite(1, 1));
         setHealth(INITIAL_HEALTH);
         setshield(INITIAL_SHIELD);
@@ -186,15 +189,30 @@ public class Avatar extends Ship{
         if (shipTier == 5) {
             lasers.setPointer(42, 68, 0, 90);
             setProjectileSprite(lasers.getSprite(5, 1));
+
+            //Decrease fire rate and increase damage
+            if (!isBeamProjectile) {
+                fireRate /= 10;
+                setDamage(getDamage() * 10);
+                isBeamProjectile = true;
+            }
         }
         else {
             //Turret style projectile
             if (upgradeCounter[0] > upgradeCounter[4]) {
+                //TODO: Toggle flip sprite
+                //TODO: Decrease Y value sprite position
+                //TODO: Vary Y value
+
+                //Increase fire rate and decrease damage
+                if (isBeamProjectile) {
+                    fireRate *= 10;
+                    setDamage(getDamage() / 10);
+                    isBeamProjectile = false;
+                }
+
                 lasers.setPointer(50, 90, 0, 0);
                 switch (upgradeCounter[0]) {
-                    //TODO: Flip sprite
-                    //TODO: Decrease Y value sprite position
-                    //TODO: Increase fire rate and decrease damage?
                     case 1 -> setProjectileSprite(lasers.getSprite(1, 1));
                     case 2 -> setProjectileSprite(lasers.getSprite(2, 1));
                     case 3 -> setProjectileSprite(lasers.getSprite(3, 1));
@@ -205,6 +223,13 @@ public class Avatar extends Ship{
             }
             //Beam style projectile
             else {
+                //Decrease fire rate and increase damage
+                if (!isBeamProjectile) {
+                    fireRate /= 10;
+                    setDamage(getDamage() * 10);
+                    isBeamProjectile = true;
+                }
+
                 lasers.setPointer(42, 68, 0, 90);
                 switch (upgradeCounter[4]) {
                     case 2 -> setProjectileSprite(lasers.getSprite(2, 1));
@@ -219,7 +244,12 @@ public class Avatar extends Ship{
 
     //Ship upgrades selected in menu increase by static increment
     public void upgradeFireRate() {
-        this.fireRate += FIRE_RATE_INCREMENT;
+        if (isBeamProjectile) {
+            this.fireRate += FIRE_RATE_INCREMENT;
+        }
+        else {
+            this.fireRate += FIRE_RATE_INCREMENT * 10;
+        }
         upgradeCounter[0]++;
     }
     public void upgradeHealth() {
@@ -235,7 +265,12 @@ public class Avatar extends Ship{
         upgradeCounter[3]++;
     }
     public void upgradeDamage() {
-        setDamage(getDamage() + DAMAGE_INCREMENT);
+        if (isBeamProjectile) {
+            setDamage(getDamage() + DAMAGE_INCREMENT);
+        }
+        else {
+            setDamage(getDamage() + DAMAGE_INCREMENT / 10);
+        }
         upgradeCounter[4]++;
     }
 
