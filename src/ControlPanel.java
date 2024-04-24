@@ -7,6 +7,7 @@
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -20,8 +21,10 @@ import java.awt.image.BufferedImage;
 import java.awt.Image;
 import java.io.IOException;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 
 public class ControlPanel extends JPanel{
     private final int WIDTH = 800;                  //Panel width
@@ -41,6 +44,7 @@ public class ControlPanel extends JPanel{
     private BufferedImage healthBar, shieldBar;     //Health/Shield bars
     private BufferedImage healthDot, shieldDot;     //Dots used to fill health/shield bars
     private ImageIcon[] icons;                      //onscreen menu button icons
+    private JLabel scoreLabel;                      //Displays score on console
 
     public ControlPanel(InputHolder input, GamePanel gp) {
         //Initialize variable
@@ -49,6 +53,14 @@ public class ControlPanel extends JPanel{
         this.icons = new ImageIcon[14];
         this.menuButtons = new JToggleButton[6];
         this.menu = null;
+        this.scoreLabel = new JLabel("SCORE: 0", SwingConstants.LEFT);
+
+        //Score label settings
+        scoreLabel.setBounds(15, 140, 120, 16);
+        scoreLabel.setBackground(new Color(0, 0, 0, 0));
+        scoreLabel.setFont(new Font("Symbol-Bold", Font.BOLD, 14));
+        scoreLabel.setForeground(Color.BLACK);
+        this.add(scoreLabel);
 
         //Panel settings
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -120,6 +132,13 @@ public class ControlPanel extends JPanel{
         }
     }
 
+    //Game tick
+    public void tick() {
+        scoreLabel.setText("SCORE: " + gPanel.getScore());
+
+        //TODO: Update health/shield bars
+    }
+
     //Set difficulty. Used by menu.
     public void setDifficulty(int difficulty) {
         gPanel.setDifficulty(difficulty);
@@ -137,6 +156,7 @@ public class ControlPanel extends JPanel{
         menuButtons[2].setSelected(false);
         menuButtons[5].setSelected(false);
         stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
+        scoreLabel.setText("SCORE: 0");
 
         //TODO: Health/shield bars
     }

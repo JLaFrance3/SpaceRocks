@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class ObjectManager {
     private static final int waveDelay = 350;       //Tick delay between spawn waves
@@ -17,6 +18,7 @@ public class ObjectManager {
     private ArrayList<Mover> hostile;               //Hostile movers(rocks, enemies, projectiles)
     private ArrayList<Mover> delHostile;            //Hostiles to be deleted from arraylist
     private ArrayList<Mover> delFriendly;           //Friendlies to be deleted from arraylist
+    private ArrayList<Rock> scoreList;              //Used for calculating score
     private GamePanel gp;                           //Game Panel
     private Random rand;                            //Random
 
@@ -34,13 +36,15 @@ public class ObjectManager {
     private int waveMaxValue, waveValue;            //Used to calculate length of enemy spawn wave
     private double[] weightIncrements;              //Spawn wave difficulty increase at linear rate based on game difficulty
     private int waveValueIncrement;                 //Spawn wave difficulty increase at linear rate based on game difficulty
-    private int difficulty;
+    private int difficulty;                         //Difficulty level
+    private int score;                              //Score
 
     public ObjectManager(GamePanel gp) {
         this.friendly = new ArrayList<Mover>();
         this.hostile = new ArrayList<Mover>();
         this.delHostile = new ArrayList<Mover>();
         this.delFriendly = new ArrayList<Mover>();
+        this.scoreList = new ArrayList<>();
         this.gp = gp;
         this.rand = new Random();
         this.tickCounter = 0;
@@ -52,6 +56,7 @@ public class ObjectManager {
         this.weightIncrements = new double[3];
         this.waveValueIncrement = 0;
         this.difficulty = 0;
+        this.score = 0;
     }
 
     //Load images
@@ -255,19 +260,19 @@ public class ObjectManager {
                     //Large
                     dx = rand.nextInt(2)+1;   //1-2 speed
                     dy = m * dx;
-                    rock = new Rock(largeRocks, gp, -300, originY);
+                    rock = new Rock(largeRocks, gp, -300, originY, size);
                     break;
                 case 1:
                     //Medium
                     dx = rand.nextInt(4)+2;   //2-5 speed
                     dy = m * dx;
-                    rock = new Rock(medRocks, gp, -300, originY);
+                    rock = new Rock(medRocks, gp, -300, originY, size);
                     break;
                 default:
                     //Small
                     dx = rand.nextInt(5)+3;   //3-7 speed
                     dy = m * dx;
-                    rock = new Rock(smallRocks, gp, -300, originY);
+                    rock = new Rock(smallRocks, gp, -300, originY, size);
                     break;
             }
 
@@ -321,8 +326,25 @@ public class ObjectManager {
             }
         }
 
+        //Get all Rocks in Mover Arraylist in order to score them
+        scoreList.addAll(delHostile.stream()
+            .filter(element->element instanceof Rock)
+            .map(element->(Rock)element)
+            .collect(Collectors.toList()));
+
+        //Add to score based on rock size value
+        for (Rock r : scoreList) {
+            score += rockValue[r.getType()];
+        }
+
+        //Remove OOB and collision objects from lists
         friendly.removeAll(delFriendly);
         hostile.removeAll(delHostile);
+
+        //Clear lists
+        delFriendly.clear();
+        delHostile.clear();
+        scoreList.clear();
     }
 
     //Reset to initial values
@@ -333,7 +355,13 @@ public class ObjectManager {
         delFriendly.clear();
         tickCounter = 0;
         waveValue = 0;
+        score = 0;
         setDifficulty(difficulty);
+    }
+
+    //Get current score
+    public int getScore() {
+        return score;
     }
 
     //Add or remove Movers from Arraylists
