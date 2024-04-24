@@ -36,19 +36,19 @@ public class Menu extends JPanel implements MouseListener{
     private Rectangle[] menuBounds;             //Menu sizes
     private Rectangle[] buttonMask;             //Masks to determine user input. No JButtons.
     private STATE state;                        //Current menu state
-    private GameFrame game;                     //Main game
+    private GamePanel gPanel;                   //Main game
     private ControlPanel cPanel;                //Main control panel
     private BufferedImage[] menuBackgrounds;    //Individual popup menu backgrounds
     private BufferedImage currentBackground;    //Current menu background
     private JLabel scoreLabel;                  //Displays score at end of game
 
-    public Menu(GameFrame game, ControlPanel cp) {
+    public Menu(GamePanel gPanel, ControlPanel cp) {
         //Initialize
         this.menuIndex = -1;
         this.menuBounds = new Rectangle[8];
         this.buttonMask = new Rectangle[15];
         this.state = STATE.NONE;
-        this.game = game;
+        this.gPanel = gPanel;
         this.cPanel = cp;
         this.menuBackgrounds = new BufferedImage[8];
         this.currentBackground = null;
@@ -204,20 +204,23 @@ public class Menu extends JPanel implements MouseListener{
             case GAMEOVER:
                 //Main menu
                 if (buttonMask[14].contains(e.getPoint())) {
-                    game.reset();
+                    cPanel.reset();
+                    gPanel.reset();
                     setState(STATE.MAIN);
                 }
                 break;
             case PAUSE:
                 //Restart
                 if (buttonMask[7].contains(e.getPoint())) {
-                    game.reset();
+                    cPanel.reset();
+                    gPanel.reset();
                     startGame();
                 }
                 else if (buttonMask[8].contains(e.getPoint())) {
                     //Main menu
+                    cPanel.reset();
+                    gPanel.reset();
                     setState(STATE.MAIN);
-                    game.reset();
                 }
                 else if (buttonMask[9].contains(e.getPoint())) {
                     //Exit
@@ -227,13 +230,16 @@ public class Menu extends JPanel implements MouseListener{
             case UPGRADE:
                 //Ship upgrade menu page 1
                 if (buttonMask[0].contains(e.getPoint())) {
-                    //TODO: Upgrade fire rate
+                    //Upgrade fire rate
+                    gPanel.upgradeFireRate();
                 }
                 else if (buttonMask[1].contains(e.getPoint())) {
-                    //TODO: Upgrade speed
+                    //Upgrade speed
+                    gPanel.upgradeSpeed();
                 }
                 else if (buttonMask[2].contains(e.getPoint())) {
-                    //TODO: Upgrade shield
+                    //Upgrade shield
+                    gPanel.upgradeShield();
                 }
                 else if (buttonMask[3].contains(e.getPoint())) {
                     //Next page
@@ -243,10 +249,12 @@ public class Menu extends JPanel implements MouseListener{
             case UPGRADE2:
                 //Ship upgrade menu page 2
                 if (buttonMask[4].contains(e.getPoint())) {
-                    //TODO: Upgrade health
+                    //Upgrade health
+                    gPanel.upgradeHealth();
                 }
                 else if (buttonMask[5].contains(e.getPoint())) {
-                    //TODO: Upgrade damage
+                    //Upgrade damage
+                    gPanel.upgradeDamage();
                 }
                 else if (buttonMask[6].contains(e.getPoint())) {
                     //Previous page
@@ -262,7 +270,7 @@ public class Menu extends JPanel implements MouseListener{
     }
 
     public void startGame() {
-        game.startGame();
+        gPanel.start();
     }
 
     //Unimplemented

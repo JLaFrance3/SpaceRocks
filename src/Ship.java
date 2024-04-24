@@ -50,6 +50,13 @@ abstract class Ship extends Mover{
         this.projectileSprite = sprite;
     }
 
+    //Set ship sprite
+    public void setSprite(BufferedImage sprite) {
+        super.setSprite(sprite);
+
+        createMask();
+    }
+
     //Sets health
     public void setHealth(int health) {
         this.health = health;
