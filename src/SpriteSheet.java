@@ -1,18 +1,18 @@
 /* 
  * Jean LaFrance
  * SpriteSheet
- * Holds sprites
+ * Allows easier access to individual sprites on sheet
  */
 
 import java.awt.image.BufferedImage;
 
 public class SpriteSheet {
     
-    private BufferedImage spriteSheet;
-    private int sWidth;
-    private int sHeight;
-    private int xOffset;
-    private int yOffset;
+    private BufferedImage spriteSheet;  //Image of sprites
+    private int sWidth;                 //Sprite width
+    private int sHeight;                //Sprite height
+    private int xOffset;                //Offset to get to desired column
+    private int yOffset;                //Offset to get to desired row
 
     public SpriteSheet(BufferedImage ss, int width, int height) {
         this.spriteSheet = ss;
@@ -30,21 +30,15 @@ public class SpriteSheet {
         this.yOffset = yOffset;
     }
 
-    public void setSpriteSize(int width, int height) {
+    //Set spritesheet position
+    public void setPointer(int width, int height, int x, int y) {
         this.sWidth = width;
         this.sHeight = height;
+        this.xOffset = x;
+        this.yOffset = y;
     }
 
-    public void setOffset(int xOffset, int yOffset) {
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
-    }
-
-    public void setPointer(int width, int height, int x, int y) {
-        setSpriteSize(width, height);
-        setOffset(x, y);
-    }
-
+    //Returns selected sprite
     public BufferedImage getSprite(int col, int row) {
         BufferedImage sprite = spriteSheet.getSubimage(col*sWidth-sWidth+xOffset, row*sHeight-sHeight+yOffset, sWidth, sHeight);
         return sprite;

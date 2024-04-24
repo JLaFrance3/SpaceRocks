@@ -43,10 +43,11 @@ public class Rock extends Mover {
         return reverse;
     }
 
+    //Game tick for animations
     @Override
     public void tick() {
         super.tick();
-        animation.runAnimation();
+        animation.tick();
         setSprite(animation.getSprite());
     }
 

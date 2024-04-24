@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ObjectManager {
+    private static final int waveDelay = 350;       //Tick delay between spawn waves
+
     private ArrayList<Mover> friendly;              //Friendly movers(playeravatar, projectiles)
     private ArrayList<Mover> hostile;               //Hostile movers(rocks, enemies, projectiles)
     private ArrayList<Mover> delHostile;            //Hostiles to be deleted from arraylist
@@ -26,12 +28,13 @@ public class ObjectManager {
     private BufferedImage[] medRocks;               //Image array passed to rock object for animation
     private BufferedImage[] largeRocks;             //Image array passed to rock object for animation
 
-    private int tickCounter, spawnRate, waveDelay;  //Used to calculate rate of spawn/waves
+    private int tickCounter, spawnRate;             //Used to calculate rate of spawn/waves
     private int[] rockValue;                        //Used in wave spawn and scoring
     private double[] rockWeight;                    //Probabilistic weight of rock spawn
     private int waveMaxValue, waveValue;            //Used to calculate length of enemy spawn wave
     private double[] weightIncrements;              //Spawn wave difficulty increase at linear rate based on game difficulty
     private int waveValueIncrement;                 //Spawn wave difficulty increase at linear rate based on game difficulty
+    private int difficulty;
 
     public ObjectManager(GamePanel gp) {
         this.friendly = new ArrayList<Mover>();
@@ -42,13 +45,13 @@ public class ObjectManager {
         this.rand = new Random();
         this.tickCounter = 0;
         this.spawnRate = 0;
-        this.waveDelay = 350;
         this.rockValue = new int[]{1, 2, 5};
         this.rockWeight = new double[3];
         this.waveMaxValue = 0;
         this.waveValue = 0;
         this.weightIncrements = new double[3];
         this.waveValueIncrement = 0;
+        this.difficulty = 0;
     }
 
     //Load images
@@ -88,6 +91,7 @@ public class ObjectManager {
         }
     }
 
+    //Game tick
     public void tick() {
 
         tickCounter++;
@@ -140,8 +144,7 @@ public class ObjectManager {
                 }
                 //TODO: explosion
                 if (m instanceof Avatar) {
-                    //TODO: Game over
-                    System.out.println("GameOver!");
+                    gp.gameover();
                 }
             }
         }
@@ -159,9 +162,10 @@ public class ObjectManager {
         waveValue = 0;  //Reset wave counter
     }
 
-    //Set difficulty
+    //Set values based on passed difficulty
     public void setDifficulty(int difficulty) {
         double[] weight = new double[3];
+        this.difficulty = difficulty;
 
         //Set values based on difficulty
         switch (difficulty) {
@@ -319,6 +323,17 @@ public class ObjectManager {
 
         friendly.removeAll(delFriendly);
         hostile.removeAll(delHostile);
+    }
+
+    //Reset to initial values
+    public void reset() {
+        friendly.clear();
+        hostile.clear();
+        delHostile.clear();
+        delFriendly.clear();
+        tickCounter = 0;
+        waveValue = 0;
+        setDifficulty(difficulty);
     }
 
     //Add or remove Movers from Arraylists

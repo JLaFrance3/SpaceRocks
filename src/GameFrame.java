@@ -10,11 +10,11 @@ import javax.swing.JLayeredPane;
 
 public class GameFrame extends JFrame{
     
-    private InputHolder input;
-    private JLayeredPane layerPane;
-    private GamePanel gPanel;
-    private ControlPanel cPanel;
-    private Menu mPanel;
+    private InputHolder input;              //Holds user input to control player avatar
+    private JLayeredPane layerPane;         //Holds all panels to layer them
+    private GamePanel gPanel;               //Game panel
+    private ControlPanel cPanel;            //Control panel
+    private Menu mPanel;                    //Menu panel
 
     public GameFrame() {
         super("Space Rocks");
@@ -49,8 +49,8 @@ public class GameFrame extends JFrame{
         this.setResizable(false);
 
         //Initialize panels
-        gPanel.init();
         mPanel.init();
+        gPanel.init(mPanel);
         cPanel.init(mPanel);
 
         //Show frame
@@ -62,8 +62,15 @@ public class GameFrame extends JFrame{
         mPanel.setState(Menu.STATE.MAIN);
     }
 
+    //Start game
     public void startGame() {
         //Start game
         gPanel.start();
+    }
+
+    //Reset all game values
+    public void reset() {
+        gPanel.reset();
+        cPanel.reset();
     }
 }

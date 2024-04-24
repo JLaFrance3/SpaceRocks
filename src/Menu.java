@@ -13,6 +13,8 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 public class Menu extends JPanel implements MouseListener{
+
+    //Menu states
     public static enum STATE {
         NONE,
         STATS,
@@ -21,28 +23,28 @@ public class Menu extends JPanel implements MouseListener{
         PAUSE,
         HELP,
         MAIN,
-        DIFFICULTY
+        DIFFICULTY,
+        GAMEOVER
     }
 
-    private int menuIndex;
-    private Rectangle[] menuBounds;
-    private Rectangle[] buttonMask;
-    private STATE state;
-    private GameFrame game;
-    private ControlPanel cPanel;
-    private BufferedImage[] menuBackgrounds;
-
-    private BufferedImage currentBackground;
+    private int menuIndex;                      //Used to determine current menu elements
+    private Rectangle[] menuBounds;             //Menu sizes
+    private Rectangle[] buttonMask;             //Masks to determine user input. No JButtons.
+    private STATE state;                        //Current menu state
+    private GameFrame game;                     //Main game
+    private ControlPanel cPanel;                //Main control panel
+    private BufferedImage[] menuBackgrounds;    //Individual popup menu backgrounds
+    private BufferedImage currentBackground;    //Current menu background
 
     public Menu(GameFrame game, ControlPanel cp) {
         //Initialize
         this.menuIndex = -1;
-        this.menuBounds = new Rectangle[7];
-        this.buttonMask = new Rectangle[14];
+        this.menuBounds = new Rectangle[8];
+        this.buttonMask = new Rectangle[15];
         this.state = STATE.NONE;
         this.game = game;
         this.cPanel = cp;
-        this.menuBackgrounds = new BufferedImage[7];
+        this.menuBackgrounds = new BufferedImage[8];
         this.currentBackground = null;
 
         //Menu screens bounds for changing size of panel
@@ -53,6 +55,7 @@ public class Menu extends JPanel implements MouseListener{
         menuBounds[4] = new Rectangle(100, 10, 600, 498);   //Help panel
         menuBounds[5] = new Rectangle(0, 0, 800, 600);      //Main menu
         menuBounds[6] = new Rectangle(200, 10, 394, 511);   //Difficulty menu
+        menuBounds[7] = new Rectangle(200, 10, 394, 511);   //Gameover panel
 
         //Button masks for now because they are a bit easier than JButtons
         buttonMask[0] = new Rectangle(285, 110, 40, 40);    //Shop Page 1 selector 1
@@ -62,19 +65,21 @@ public class Menu extends JPanel implements MouseListener{
         buttonMask[4] = new Rectangle(285, 110, 40, 40);    //Shop Page 2 Selector 1
         buttonMask[5] = new Rectangle(285, 230, 40, 40);    //Shop Page 2 Selector 2
         buttonMask[6] = new Rectangle(11, 445, 40, 40);     //Shop Page 2 Back
-        buttonMask[7] = new Rectangle(47, 40, 300, 100);    //Pause Menu Restart
+        buttonMask[7] = new Rectangle(47, 40, 300, 100);    //Pause Menu restart
         buttonMask[8] = new Rectangle(47, 200, 300, 100);   //Pause Menu MainMenu
         buttonMask[9] = new Rectangle(47, 360, 300, 100);   //Pause Menu Exit
         buttonMask[10] = new Rectangle(250, 400, 300, 100); //Main menu start button
         buttonMask[11] = new Rectangle(47, 40, 300, 100);   //Difficulty Menu Easy
         buttonMask[12] = new Rectangle(47, 200, 300, 100);  //Difficulty Menu Medium
         buttonMask[13] = new Rectangle(47, 360, 300, 100);  //Difficulty Menu Hard
+        buttonMask[14] = new Rectangle(47, 350, 300, 100);  //Gameover Main Menu
         
         //Panel preferences
         this.setLayout(null);
         this.addMouseListener(this);
     }
 
+    //Initialize
     public void init() {
         BufferedImageLoader loader = new BufferedImageLoader(); 
 
@@ -86,11 +91,13 @@ public class Menu extends JPanel implements MouseListener{
             menuBackgrounds[4] = loader.load("res/Help.png");
             menuBackgrounds[5] = loader.load("res/StartBackground.png");
             menuBackgrounds[6] = loader.load("res/Difficulty.png");
+            menuBackgrounds[7] = loader.load("res/GameOver.png");
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
 
+    //Changes current menu state to display a menu popup
     public void setState(STATE s) {
         this.state = s;
 
@@ -116,12 +123,16 @@ public class Menu extends JPanel implements MouseListener{
             case DIFFICULTY:
                 menuIndex = 6;
                 break;
+            case GAMEOVER:
+                menuIndex = 7;
+                break;
             default:
                 menuIndex = -1;
                 this.setVisible(false);
                 break;
         }
 
+        //Display menu based on index
         if (menuIndex != -1) {
             this.setBounds(menuBounds[menuIndex]);
             currentBackground = menuBackgrounds[menuIndex];
@@ -129,6 +140,7 @@ public class Menu extends JPanel implements MouseListener{
         }
     }
 
+    //Get current menu state
     public STATE getState() {
         return state;
     }
@@ -143,7 +155,7 @@ public class Menu extends JPanel implements MouseListener{
     @Override
     public void mousePressed(MouseEvent e) {
 
-        //Check if mouse click is within specified menu buttons
+        //Check if mouse click is within specified menu buttons based on menu state
         switch (state) {
             case MAIN:
                 // Start button
@@ -157,29 +169,38 @@ public class Menu extends JPanel implements MouseListener{
                     //Easy
                     cPanel.setDifficulty(0);
                     setState(STATE.NONE);
-                    game.startGame();
+                    startGame();
                 }
                 else if (buttonMask[12].contains(e.getPoint())) {
                     //Medium
                     cPanel.setDifficulty(1);
                     setState(STATE.NONE);
-                    game.startGame();
+                    startGame();
                 }
                 else if (buttonMask[13].contains(e.getPoint())) {
                     //Hard
                     cPanel.setDifficulty(2);
                     setState(STATE.NONE);
-                    game.startGame();
+                    startGame();
+                }
+                break;
+            case GAMEOVER:
+                //Main menu
+                if (buttonMask[14].contains(e.getPoint())) {
+                    game.reset();
+                    setState(STATE.MAIN);
                 }
                 break;
             case PAUSE:
-                //Get pause menu option
+                //Restart
                 if (buttonMask[7].contains(e.getPoint())) {
-                    //TODO: Restart game
+                    game.reset();
+                    startGame();
                 }
                 else if (buttonMask[8].contains(e.getPoint())) {
                     //Main menu
                     setState(STATE.MAIN);
+                    game.reset();
                 }
                 else if (buttonMask[9].contains(e.getPoint())) {
                     //Exit
@@ -200,7 +221,6 @@ public class Menu extends JPanel implements MouseListener{
                 else if (buttonMask[3].contains(e.getPoint())) {
                     //Next page
                     setState(STATE.UPGRADE2);
-                    repaint();
                 }
                 break;
             case UPGRADE2:
@@ -214,10 +234,14 @@ public class Menu extends JPanel implements MouseListener{
                 else if (buttonMask[6].contains(e.getPoint())) {
                     //Previous page
                     setState((STATE.UPGRADE));
-                    repaint();
                 }
                 break;
         }
+        repaint();
+    }
+
+    public void startGame() {
+        game.startGame();
     }
 
     //Unimplemented
