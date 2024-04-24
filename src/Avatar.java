@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 
 public class Avatar extends Ship{
 
+    //Intitial values used in game reset
     private static final double initialFireRate = 0.03;
     private static final int initialHealth = 100;
     private static final int initialShield = 0;
@@ -16,9 +17,9 @@ public class Avatar extends Ship{
     private static final int initialDamage = 50;
     private static final int initialX = 725, initialY = 200;
 
-    private InputHolder input;
+    private InputHolder input;  //Holds control issued by control panel
     private double fireRate;    //Limit fire rate with increment
-    private double fireCount;
+    private double fireCount;   //Counter
 
     //Player avatar constructor
     public Avatar(BufferedImage sprite, GamePanel gp, InputHolder input) {
@@ -34,8 +35,10 @@ public class Avatar extends Ship{
         setDamage(initialDamage);
     }
 
+    //Game tick
     public void tick() {
-        //Coordinate plane is all wonky due to graphics getting rotated
+
+        //Adjust velocity based on user input
         switch(input.getInput()) {
             case 'w':
                 setDY(-getSpeed());
@@ -45,6 +48,7 @@ public class Avatar extends Ship{
                 break;
         }
 
+        //Fire projectile if isShooting
         shoot();
         
         //Wall collision
@@ -59,8 +63,10 @@ public class Avatar extends Ship{
             }
         }
 
+        //Adjust position
         super.tick();
 
+        //Reset velocity between ticks
         setDY(0);
     }
 
@@ -89,10 +95,13 @@ public class Avatar extends Ship{
         this.fireRate = fr;
     }
 
+    //Fire projectiles
     public void shoot() {
+        //Check user input
         if(input.isShooting()) {
             fireCount += fireRate;
 
+            //Limit fire rate
             if(fireCount >=1) {
                 Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this);
                 getGP().getObjectManager().addFriendly(projectile);

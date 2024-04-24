@@ -11,8 +11,8 @@
 
  public class InputHolder {
     
-    private char userInput;
-    private boolean isShooting;
+    private char userInput;         //User input command
+    private boolean isShooting;     //Shooting status based on spacebar input
 
     public InputHolder() {
         userInput = ' ';

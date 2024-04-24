@@ -1,15 +1,16 @@
 /* 
  * Jean LaFrance
  * ControlPanel
- * JPanel used to collect and pass user inputs to game
+ * JPanel used to collect and pass user inputs to game.
+ * Contains menu buttons and display player health and shield.
  */
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -23,28 +24,26 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 public class ControlPanel extends JPanel{
-    private final int WIDTH = 800;
-    private final int HEIGHT = 200;
+    private final int WIDTH = 800;                  //Panel width
+    private final int HEIGHT = 200;                 //Panel height
 
-    private GamePanel gPanel;
-    private InputListener listener;
-    private JToggleButton[] menuButtons;
+    private GamePanel gPanel;                       //Game panel
+    private InputListener listener;                 //Main listener
+    private JToggleButton[] menuButtons;            //Menu buttons displayed on panel
 
-    private Menu menu;
-    private BufferedImage console;
-    private BufferedImage UI_Sheet;
-    private SpriteSheet UI_SS;
-    private BufferedImage joystickBase;
-    private BufferedImage joystick;
-    private int stickUp, stickDown, stickPos;
-    private BufferedImage healthBar;
-    private BufferedImage shieldBar;
-    private BufferedImage healthDot;
-    private BufferedImage shieldDot;
-    private ImageIcon[] icons;              //onscreen menu icons
+    private Menu menu;                              //Menu responsible for displaying correct screens
+    private BufferedImage console;                  //Background image for ControlPanel
+    private BufferedImage UI_Sheet;                 //Sheet of UI elements
+    private SpriteSheet UI_SS;                      //Spritesheet of UI elements
+    private BufferedImage joystickBase;             //Onscreen joystick base
+    private BufferedImage joystick;                 //Onscreen joystick
+    private int stickUp, stickDown, stickPos;       //Joystick positions
+    private BufferedImage healthBar, shieldBar;     //Health/Shield bars
+    private BufferedImage healthDot, shieldDot;     //Dots used to fill health/shield bars
+    private ImageIcon[] icons;                      //onscreen menu button icons
 
     public ControlPanel(InputHolder input, GamePanel gp) {
-        //Initialize
+        //Initialize variable
         this.gPanel = gp;
         this.listener = new InputListener(this, input);
         this.icons = new ImageIcon[14];
@@ -60,14 +59,15 @@ public class ControlPanel extends JPanel{
         this.setFocusable(true);
         this.requestFocus();
         
-        //UI
+        //Menu buttons
         for(int i = 0; i < menuButtons.length; i++) {
             menuButtons[i] = new JToggleButton();
             menuButtons[i].setBounds(575+(35*i), 128, 30, 30);
-            menuButtons[i].addItemListener(listener);
+            menuButtons[i].addActionListener(listener);
         }
     }
 
+    //Initialize
     public void init(Menu menu) {
         this.menu = menu;
 
@@ -120,11 +120,12 @@ public class ControlPanel extends JPanel{
         }
     }
 
-    //Set difficulty
+    //Set difficulty. Used by menu.
     public void setDifficulty(int difficulty) {
         gPanel.setDifficulty(difficulty);
     }
 
+    //Solved focus issues
     public void focus() {
         this.requestFocus();
     }
@@ -159,7 +160,7 @@ public class ControlPanel extends JPanel{
         }
     }
     
-    private class InputListener implements KeyListener, MouseListener, MouseMotionListener, ItemListener {
+    private class InputListener implements KeyListener, MouseListener, MouseMotionListener, ActionListener {
 
         private ControlPanel panel;
         private InputHolder input;
@@ -171,6 +172,7 @@ public class ControlPanel extends JPanel{
             this.clickPosition = new Point(0, 0);
         }
 
+        //Pass commands to input holder based on keypress
         @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -178,31 +180,26 @@ public class ControlPanel extends JPanel{
             }
 
             switch(e.getKeyCode()) {
+                //Up command
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
                 case KeyEvent.VK_D:
                     input.setInput('w');
                     stickPos = stickUp;
                     break;
+                //Down command
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
                 case KeyEvent.VK_A:
                     input.setInput('s');
                     stickPos = stickDown;
                     break;
+                //Pause menu toggle
                 case KeyEvent.VK_BACK_SPACE:
                 case KeyEvent.VK_ESCAPE:
                 case KeyEvent.VK_E:
                     if (!(menu.getState() == Menu.STATE.MAIN)) {
-                        if(menu.getState() == Menu.STATE.NONE) {
-                            menuButtons[2].setSelected(true);
-                        }
-                        else {
-                            menuButtons[0].setSelected(false);
-                            menuButtons[1].setSelected(false);
-                            menuButtons[2].setSelected(false);
-                            menuButtons[5].setSelected(false);
-                        }
+                        menuButtons[2].doClick();
                     }
                     break;
             }
@@ -213,16 +210,11 @@ public class ControlPanel extends JPanel{
             if(e.getKeyCode() == KeyEvent.VK_SPACE) {
                 input.setShooting(false);
             }
-            //Ensure escape key goes through
-            else if(input.getInput() != 'e') {
-                if(input.getInput() == 'w' || input.getInput() == 's') {
-                    stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
-                }
-
-                input.clear();
-            }
+            stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
+            input.clear();
         }
 
+        //Alternative input using joystick
         @Override
         public void mouseDragged(MouseEvent e) {
             if(e.getY() < clickPosition.getY()) {
@@ -247,28 +239,51 @@ public class ControlPanel extends JPanel{
             input.clear();
         }
 
+        //Used for toggle buttons
+        //Radio buttons were not viable due to inability to unselect all
         @Override
-        public void itemStateChanged(ItemEvent e) {
+        public void actionPerformed(ActionEvent e) {
 
-            //Pause menu
-            if (menuButtons[2].isSelected()) {
-                gPanel.pause();
-                menu.setState(Menu.STATE.PAUSE);
+            //Determine if all unselected
+            boolean selected = false;
+            for(int i = 0; i < menuButtons.length; i++) {
+                if (i == 3) i += 2;
+                if (menuButtons[i].isSelected()) selected = true;
             }
-            //Upgrades menu
-            else if (menuButtons[1].isSelected()) {
-                gPanel.pause();
-                menu.setState(Menu.STATE.UPGRADE);
-            }
-            //Ship stats panel
-            else if (menuButtons[0].isSelected()) {
-                gPanel.pause();
-                menu.setState(Menu.STATE.STATS);
-            }
-            //Help panel
-            else if (menuButtons[5].isSelected()) {
-                gPanel.pause();
-                menu.setState(Menu.STATE.HELP);
+
+            if (selected) {
+                //Pause menu
+                if (e.getSource() == menuButtons[2]) {
+                    gPanel.pause();
+                    menu.setState(Menu.STATE.PAUSE);
+                    menuButtons[0].setSelected(false);
+                    menuButtons[1].setSelected(false);
+                    menuButtons[5].setSelected(false);
+                }
+                //Upgrades menu
+                else if (e.getSource() == menuButtons[1]) {
+                    gPanel.pause();
+                    menu.setState(Menu.STATE.UPGRADE);
+                    menuButtons[0].setSelected(false);
+                    menuButtons[2].setSelected(false);
+                    menuButtons[5].setSelected(false);
+                }
+                //Ship stats panel
+                else if (e.getSource() == menuButtons[0]) {
+                    gPanel.pause();
+                    menu.setState(Menu.STATE.STATS);
+                    menuButtons[1].setSelected(false);
+                    menuButtons[2].setSelected(false);
+                    menuButtons[5].setSelected(false);
+                }
+                //Help panel
+                else {
+                    gPanel.pause();
+                    menu.setState(Menu.STATE.HELP);
+                    menuButtons[0].setSelected(false);
+                    menuButtons[1].setSelected(false);
+                    menuButtons[2].setSelected(false);
+                }
             }
             //No menu
             else {
@@ -277,6 +292,7 @@ public class ControlPanel extends JPanel{
                     menu.setState(Menu.STATE.NONE);
                 }
             }
+
             //Music toggle
             if (menuButtons[3].isSelected()) {
                 //TODO: music toggle

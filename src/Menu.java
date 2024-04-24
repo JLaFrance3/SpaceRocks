@@ -13,6 +13,8 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 public class Menu extends JPanel implements MouseListener{
+
+    //Menu states
     public static enum STATE {
         NONE,
         STATS,
@@ -25,15 +27,14 @@ public class Menu extends JPanel implements MouseListener{
         GAMEOVER
     }
 
-    private int menuIndex;
-    private Rectangle[] menuBounds;
-    private Rectangle[] buttonMask;
-    private STATE state;
-    private GameFrame game;
-    private ControlPanel cPanel;
-    private BufferedImage[] menuBackgrounds;
-
-    private BufferedImage currentBackground;
+    private int menuIndex;                      //Used to determine current menu elements
+    private Rectangle[] menuBounds;             //Menu sizes
+    private Rectangle[] buttonMask;             //Masks to determine user input. No JButtons.
+    private STATE state;                        //Current menu state
+    private GameFrame game;                     //Main game
+    private ControlPanel cPanel;                //Main control panel
+    private BufferedImage[] menuBackgrounds;    //Individual popup menu backgrounds
+    private BufferedImage currentBackground;    //Current menu background
 
     public Menu(GameFrame game, ControlPanel cp) {
         //Initialize
@@ -78,6 +79,7 @@ public class Menu extends JPanel implements MouseListener{
         this.addMouseListener(this);
     }
 
+    //Initialize
     public void init() {
         BufferedImageLoader loader = new BufferedImageLoader(); 
 
@@ -95,6 +97,7 @@ public class Menu extends JPanel implements MouseListener{
         }
     }
 
+    //Changes current menu state to display a menu popup
     public void setState(STATE s) {
         this.state = s;
 
@@ -129,6 +132,7 @@ public class Menu extends JPanel implements MouseListener{
                 break;
         }
 
+        //Display menu based on index
         if (menuIndex != -1) {
             this.setBounds(menuBounds[menuIndex]);
             currentBackground = menuBackgrounds[menuIndex];
@@ -136,6 +140,7 @@ public class Menu extends JPanel implements MouseListener{
         }
     }
 
+    //Get current menu state
     public STATE getState() {
         return state;
     }
@@ -150,7 +155,7 @@ public class Menu extends JPanel implements MouseListener{
     @Override
     public void mousePressed(MouseEvent e) {
 
-        //Check if mouse click is within specified menu buttons
+        //Check if mouse click is within specified menu buttons based on menu state
         switch (state) {
             case MAIN:
                 // Start button
@@ -164,22 +169,23 @@ public class Menu extends JPanel implements MouseListener{
                     //Easy
                     cPanel.setDifficulty(0);
                     setState(STATE.NONE);
-                    game.startGame();
+                    startGame();
                 }
                 else if (buttonMask[12].contains(e.getPoint())) {
                     //Medium
                     cPanel.setDifficulty(1);
                     setState(STATE.NONE);
-                    game.startGame();
+                    startGame();
                 }
                 else if (buttonMask[13].contains(e.getPoint())) {
                     //Hard
                     cPanel.setDifficulty(2);
                     setState(STATE.NONE);
-                    game.startGame();
+                    startGame();
                 }
                 break;
             case GAMEOVER:
+                //Main menu
                 if (buttonMask[14].contains(e.getPoint())) {
                     game.reset();
                     setState(STATE.MAIN);
@@ -189,6 +195,7 @@ public class Menu extends JPanel implements MouseListener{
                 //Restart
                 if (buttonMask[7].contains(e.getPoint())) {
                     game.reset();
+                    startGame();
                 }
                 else if (buttonMask[8].contains(e.getPoint())) {
                     //Main menu
@@ -231,6 +238,10 @@ public class Menu extends JPanel implements MouseListener{
                 break;
         }
         repaint();
+    }
+
+    public void startGame() {
+        game.startGame();
     }
 
     //Unimplemented

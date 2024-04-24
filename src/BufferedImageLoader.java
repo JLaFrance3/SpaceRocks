@@ -1,7 +1,7 @@
 /* 
  * Jean LaFrance
  * BufferedImageLoader
- * For loading up buffered images
+ * Basic class for loading up buffered images
  */
 
 import java.awt.image.BufferedImage;

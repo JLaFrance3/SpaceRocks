@@ -15,7 +15,7 @@ abstract class Mover {
 
     private final boolean displayHitbox = false;    //Used for debugging
 
-    private int speed;              //Pixels/second?
+    private int speed;              //Use to determine dX and dY
     private int x, y;               //Position
     private int dX, dY;             //Velocity
     private int rotation;           //Rotation of sprite
@@ -26,6 +26,7 @@ abstract class Mover {
     private GamePanel gp;           //Panel
 
     public Mover(BufferedImage sprite, GamePanel gp) {
+        //Initialize
         this.speed = 20;
         this.x = 100;
         this.y = 100;
@@ -43,6 +44,7 @@ abstract class Mover {
 
     //Constructor with position
     public Mover(BufferedImage sprite, GamePanel gp, int x, int y) {
+        //Initialize
         this.speed = 5;
         this.x = x;
         this.y = y;
@@ -60,6 +62,7 @@ abstract class Mover {
 
     //Constructor with position/rotation
     public Mover(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
+        //Initialize
         this.speed = 6;
         this.x = x;
         this.y = y;
@@ -88,6 +91,7 @@ abstract class Mover {
         int left = width / 2;
         int right = left;
         
+        //Use non-transparent pixels to determine max/min bounds
         for(int i = 0; i < sprite.getWidth(); i++) {
             for(int j = 0; j < sprite.getHeight(); j++) {
                 if (sprite.getRGB(i, j) != 0) {
@@ -100,6 +104,8 @@ abstract class Mover {
         }
         
         Rectangle r = new Rectangle(left+x, top+y, right-left, bottom-top);
+
+        //Rotate mask
         AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(rotation), r.getCenterX(), r.getCenterY());
         s = at.createTransformedShape(r);
         r = s.getBounds();

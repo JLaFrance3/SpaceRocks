@@ -1,7 +1,7 @@
 /* 
  * Jean LaFrance
- * Entity
- * Parent class for all entities in game
+ * Ship
+ * Parent class for all ships in game
  */
 
 import java.awt.Graphics2D;
@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 abstract class Ship extends Mover{
     
-    private int health;         //Health
+    private int health;          //Health
     private int shield;          //Damage negation
 
     private BufferedImage projectileSprite;     //Projectile sprite
@@ -22,8 +22,10 @@ abstract class Ship extends Mover{
         shield = 0;
     }
 
+    //Abstract methods
     public abstract void shoot();
 
+    //Game tick
     public void tick() {
         super.tick();
     }

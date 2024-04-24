@@ -91,6 +91,7 @@ public class ObjectManager {
         }
     }
 
+    //Game tick
     public void tick() {
 
         tickCounter++;
@@ -161,7 +162,7 @@ public class ObjectManager {
         waveValue = 0;  //Reset wave counter
     }
 
-    //Set difficulty
+    //Set values based on passed difficulty
     public void setDifficulty(int difficulty) {
         double[] weight = new double[3];
         this.difficulty = difficulty;
