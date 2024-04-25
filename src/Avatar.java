@@ -133,7 +133,6 @@ public class Avatar extends Ship{
                 Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this, isBeamProjectile);
                 getGP().getObjectManager().addFriendly(projectile);
                 fireCount--;
-                System.out.printf("Damge: %f and Firerate: %f\n", getDamage(), getFireRate());
             }
         }
     }
