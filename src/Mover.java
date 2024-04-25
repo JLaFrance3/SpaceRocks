@@ -19,7 +19,8 @@ abstract class Mover {
     private int x, y;               //Position
     private int dX, dY;             //Velocity
     private int rotation;           //Rotation of sprite
-    private int damage;             //Damage
+    private double damage;          //Damage
+    private double health;          //Health
     private Rectangle mask;         //Collision mask
 
     private BufferedImage sprite;   //sprite image
@@ -34,6 +35,7 @@ abstract class Mover {
         this.dY = 0;
         this.rotation = 0;
         this.damage = 10;
+        this.health = 100;
         this.mask = null;
 
         this.sprite = sprite;
@@ -126,8 +128,13 @@ abstract class Mover {
     }
     
     //Returns entity damage
-    public int getDamage() {
+    public double getDamage() {
         return damage;
+    }
+
+    //Returns entity health
+    public double getHealth() {
+        return health;
     }
 
     //Returns entity x coordinate
@@ -193,8 +200,13 @@ abstract class Mover {
     }
 
     //Sets damage
-    public void setDamage(int damage) {
+    public void setDamage(double damage) {
         this.damage = damage;
+    }
+
+    //Sets health
+    public void setHealth(double health) {
+        this.health = health;
     }
 
     //Sets x velocity

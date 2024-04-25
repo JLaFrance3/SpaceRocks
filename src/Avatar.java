@@ -23,6 +23,7 @@ public class Avatar extends Ship{
     private static final int SHIELD_INCREMENT = 20;
     private static final int SPEED_INCREMENT = 1;
     private static final int DAMAGE_INCREMENT = 20;
+    private static final int PROJECTILE_CONVERSION = 8;
 
     private SpriteSheet ships;          //Holds all ships
     private SpriteSheet lasers;         //Holds all lasers
@@ -44,7 +45,7 @@ public class Avatar extends Ship{
         this.fireRate = INITIAL_FIRE_RATE;
         this.fireCount = 0;
         this.shipTier = 1;
-        isBeamProjectile = true;
+        this.isBeamProjectile = true;
 
         setHealth(INITIAL_HEALTH);
         setshield(INITIAL_SHIELD);
@@ -95,7 +96,7 @@ public class Avatar extends Ship{
         this.fireCount = 0;
         this.shipTier = 1;
         isBeamProjectile = true;
-        setSprite(ships.getSprite(1, 1));
+        
         setHealth(INITIAL_HEALTH);
         setshield(INITIAL_SHIELD);
         setSpeed(INITIAL_SPEED);
@@ -103,6 +104,10 @@ public class Avatar extends Ship{
         setDX(0);
         setDY(0);
         setLocation(INITIAL_X, INITIAL_Y);
+
+        lasers.setPointer(42, 68, 0, 90);
+        setProjectileSprite(lasers.getSprite(1, 1));
+        setSprite(ships.getSprite(1, 1));
 
         super.createMask();
     }
@@ -125,9 +130,10 @@ public class Avatar extends Ship{
 
             //Limit fire rate
             if(fireCount >=1) {
-                Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this);
+                Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this, isBeamProjectile);
                 getGP().getObjectManager().addFriendly(projectile);
                 fireCount--;
+                System.out.printf("Damge: %f and Firerate: %f\n", getDamage(), getFireRate());
             }
         }
     }
@@ -190,24 +196,20 @@ public class Avatar extends Ship{
             lasers.setPointer(42, 68, 0, 90);
             setProjectileSprite(lasers.getSprite(5, 1));
 
-            //Decrease fire rate and increase damage
+            //Decrease fire rate and increase damage if changing projectile type
             if (!isBeamProjectile) {
-                fireRate /= 10;
-                setDamage(getDamage() * 10);
+                fireRate /= PROJECTILE_CONVERSION;
+                setDamage(getDamage() * PROJECTILE_CONVERSION);
                 isBeamProjectile = true;
             }
         }
         else {
             //Turret style projectile
             if (upgradeCounter[0] > upgradeCounter[4]) {
-                //TODO: Toggle flip sprite
-                //TODO: Decrease Y value sprite position
-                //TODO: Vary Y value
-
-                //Increase fire rate and decrease damage
+                //Increase fire rate and decrease damage if changing to turret projectiles
                 if (isBeamProjectile) {
-                    fireRate *= 10;
-                    setDamage(getDamage() / 10);
+                    fireRate *= PROJECTILE_CONVERSION;
+                    setDamage(getDamage() / PROJECTILE_CONVERSION);
                     isBeamProjectile = false;
                 }
 
@@ -223,10 +225,10 @@ public class Avatar extends Ship{
             }
             //Beam style projectile
             else {
-                //Decrease fire rate and increase damage
+                //Decrease fire rate and increase damage if changing to beam projectiles
                 if (!isBeamProjectile) {
-                    fireRate /= 10;
-                    setDamage(getDamage() * 10);
+                    fireRate /= PROJECTILE_CONVERSION;
+                    setDamage(getDamage() * PROJECTILE_CONVERSION);
                     isBeamProjectile = true;
                 }
 
@@ -248,7 +250,7 @@ public class Avatar extends Ship{
             this.fireRate += FIRE_RATE_INCREMENT;
         }
         else {
-            this.fireRate += FIRE_RATE_INCREMENT * 10;
+            this.fireRate += FIRE_RATE_INCREMENT * PROJECTILE_CONVERSION;
         }
         upgradeCounter[0]++;
     }
@@ -269,7 +271,7 @@ public class Avatar extends Ship{
             setDamage(getDamage() + DAMAGE_INCREMENT);
         }
         else {
-            setDamage(getDamage() + DAMAGE_INCREMENT / 10);
+            setDamage(getDamage() + DAMAGE_INCREMENT / PROJECTILE_CONVERSION);
         }
         upgradeCounter[4]++;
     }

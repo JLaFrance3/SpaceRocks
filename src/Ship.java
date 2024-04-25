@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 abstract class Ship extends Mover{
     
-    private int health;          //Health
+    
     private int shield;          //Damage negation
 
     private BufferedImage projectileSprite;     //Projectile sprite
@@ -18,9 +18,8 @@ abstract class Ship extends Mover{
     public Ship(BufferedImage sprite, GamePanel gp, int x, int y, int rotation) {
         super(sprite, gp, x, y, rotation);
         
-        health = 100;
-        shield = 0;
-        projectileSprite = null;
+        this.shield = 0;
+        this.projectileSprite = null;
     }
 
     //Abstract methods
@@ -29,11 +28,6 @@ abstract class Ship extends Mover{
     //Game tick
     public void tick() {
         super.tick();
-    }
-
-    //Returns entity health
-    public int getHealth() {
-        return health;
     }
 
     //Returns entity shield
@@ -56,11 +50,6 @@ abstract class Ship extends Mover{
         super.setSprite(sprite);
 
         createMask();
-    }
-
-    //Sets health
-    public void setHealth(int health) {
-        this.health = health;
     }
 
     //Sets shield
