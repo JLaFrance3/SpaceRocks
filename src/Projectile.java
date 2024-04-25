@@ -15,8 +15,9 @@ public class Projectile extends Mover{
         setDX(-getSpeed());
     }
 
-    public Projectile(BufferedImage sprite, GamePanel gp, Ship ent) {
-        super(sprite, gp, ent.getX(), ent.getY() - 10);
+    public Projectile(BufferedImage sprite, GamePanel gp, Ship ent, Boolean isBeam) {
+        super(sprite, gp, ent.getX() - 18, 
+            isBeam ? (ent.getY() - 10) : (ent.getY() - 20 + (int)(Math.random() * 11) - 5));
 
         setRotation(ent.getRotation());
         setSpeed(20);

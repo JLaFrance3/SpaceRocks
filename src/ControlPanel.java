@@ -130,6 +130,9 @@ public class ControlPanel extends JPanel{
             this.add(menuButtons[j]);
             menuButtons[j].setSelectedIcon(icons[j+7]);
         }
+
+        //Set Menu button icon
+        menu.setButtonIcon(new ImageIcon((Image)UI_SS.getSprite(12, 1)));
     }
 
     //Game tick
@@ -219,7 +222,14 @@ public class ControlPanel extends JPanel{
                 case KeyEvent.VK_ESCAPE:
                 case KeyEvent.VK_E:
                     if (!(menu.getState() == Menu.STATE.MAIN)) {
-                        menuButtons[2].doClick();
+                        switch (menu.getState()) {
+                            case STATS -> menuButtons[0].doClick();
+                            case PAUSE -> menuButtons[2].doClick();
+                            case UPGRADE -> menuButtons[1].doClick();
+                            case UPGRADE2 -> menuButtons[1].doClick();
+                            case HELP -> menuButtons[5].doClick();
+                            case NONE -> menuButtons[2].doClick();
+                        }
                     }
                     break;
             }

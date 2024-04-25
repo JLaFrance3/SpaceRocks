@@ -59,11 +59,10 @@ public class GamePanel extends JPanel{
             projectileSS = loader.load("res/ProjectileSheet.png");
 
             ships = new SpriteSheet(shipSS, 59, 47);
-            player = new Avatar(ships.getSprite(1, 1), this, input);
-            manager.addFriendly(player);
-
             lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
-            player.setProjectileSprite(lasers.getSprite(1, 1));
+
+            player = new Avatar(ships, lasers, ships.getSprite(1, 1), this, input);
+            manager.addFriendly(player);
         } 
         catch (IOException e) {
             e.printStackTrace();
@@ -93,7 +92,6 @@ public class GamePanel extends JPanel{
 
     //Reset all game values to default
     public void reset() {
-        player.setSprite(ships.getSprite(1, 1));
         input.clear();
         player.reset();
         manager.reset();
@@ -113,18 +111,40 @@ public class GamePanel extends JPanel{
         manager.setDifficulty(difficulty);
     }
 
+    //Ship upgrades selected in menu increase by static increment
+    public void upgradeFireRate() {
+        player.upgradeFireRate();
+        player.checkShipUpgrade();
+    }
+    public void upgradeHealth() {
+        player.upgradeHealth();
+        player.checkShipUpgrade();
+    }
+    public void upgradeShield() {
+        player.upgradeShield();
+        player.checkShipUpgrade();
+    }
+    public void upgradeSpeed() {
+        player.upgradeSpeed();
+        player.checkShipUpgrade();
+    }
+    public void upgradeDamage() {
+        player.upgradeDamage();
+        player.checkShipUpgrade();
+    }
+
+    //Getters
     public ObjectManager getObjectManager() {
         return manager;
     }
-
     public int getScore() {
         return manager.getScore();
     }
 
+    //Timer stop/start
     public void pause() {
         timer.stop();
     }
-
     public void unpause() {
         timer.start();
     }
