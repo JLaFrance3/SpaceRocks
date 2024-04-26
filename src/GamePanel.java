@@ -133,18 +133,41 @@ public class GamePanel extends JPanel{
         player.checkShipUpgrade();
     }
 
-    //Getters
+    //Get object manager
     public ObjectManager getObjectManager() {
         return manager;
     }
+
+    //Get current score
     public int getScore() {
         return manager.getScore();
     }
 
-    //Timer stop/start
+    //Get current player health
+    public double getPlayerHealth() {
+        return player.getHealth();
+    }
+
+    //Get current player shield
+    public double getPlayerShield() {
+        return player.getshield();
+    }
+
+    //Get player maximum health
+    public double getPlayerMaxHealth() {
+        return player.getMaxHealth();
+    }
+
+    //Get player maximum shield
+    public double getPlayerMaxShield() {
+        return player.getMaxShield();
+    }
+
+    //Timer stop
     public void pause() {
         timer.stop();
     }
+    //Timer start
     public void unpause() {
         timer.start();
     }

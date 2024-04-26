@@ -33,7 +33,6 @@ public class ControlPanel extends JPanel{
     private GamePanel gPanel;                       //Game panel
     private InputListener listener;                 //Main listener
     private JToggleButton[] menuButtons;            //Menu buttons displayed on panel
-
     private Menu menu;                              //Menu responsible for displaying correct screens
     private BufferedImage console;                  //Background image for ControlPanel
     private BufferedImage UI_Sheet;                 //Sheet of UI elements
@@ -41,10 +40,11 @@ public class ControlPanel extends JPanel{
     private BufferedImage joystickBase;             //Onscreen joystick base
     private BufferedImage joystick;                 //Onscreen joystick
     private int stickUp, stickDown, stickPos;       //Joystick positions
-    private BufferedImage healthBar, shieldBar;     //Health/Shield bars
-    private BufferedImage healthDot, shieldDot;     //Dots used to fill health/shield bars
+    private BufferedImage hBar, sBar;               //Health/Shield bar images
+    private StatusBar healthBar, shieldBar;         //Health/Shield bars
+    private BufferedImage hDot, sDot;               //Dots used to fill health/shield bars
     private ImageIcon[] icons;                      //onscreen menu button icons
-    private JLabel scoreLabel;                      //Displays score on console
+    private JLabel scoreLabel;                      //Displays score on console    
 
     public ControlPanel(InputHolder input, GamePanel gp) {
         //Initialize variable
@@ -53,7 +53,27 @@ public class ControlPanel extends JPanel{
         this.icons = new ImageIcon[14];
         this.menuButtons = new JToggleButton[6];
         this.menu = null;
+        this.UI_Sheet = null;
+        this.UI_SS = null;
+        this.joystickBase = null;
+        this.joystick = null;
+        this.stickUp = 0;
+        this.stickDown = 0;
+        this.stickPos = 0;
+        this.hBar = null;
+        this.sBar = null;
+        this.healthBar = null;
+        this.shieldBar = null;
+        this.sDot = null;
+        this.hDot = null;
         this.scoreLabel = new JLabel("SCORE: 0", SwingConstants.LEFT);
+        
+        //Menu buttons
+        for(int i = 0; i < menuButtons.length; i++) {
+            menuButtons[i] = new JToggleButton();
+            menuButtons[i].setBounds(575+(35*i), 128, 30, 30);
+            menuButtons[i].addActionListener(listener);
+        }
 
         //Score label settings
         scoreLabel.setBounds(15, 140, 120, 16);
@@ -70,13 +90,6 @@ public class ControlPanel extends JPanel{
         this.addMouseMotionListener(listener);
         this.setFocusable(true);
         this.requestFocus();
-        
-        //Menu buttons
-        for(int i = 0; i < menuButtons.length; i++) {
-            menuButtons[i] = new JToggleButton();
-            menuButtons[i].setBounds(575+(35*i), 128, 30, 30);
-            menuButtons[i].addActionListener(listener);
-        }
     }
 
     //Initialize
@@ -101,15 +114,19 @@ public class ControlPanel extends JPanel{
         stickUp = stickPos - 20;
         stickDown = stickPos + 20;
 
-        //Load bars
+        //Load status bar images
         UI_SS.setPointer(200, 50, 0, 60);
-        healthBar = UI_SS.getSprite(1, 2);
-        shieldBar = UI_SS.getSprite(1, 1);
+        hBar = UI_SS.getSprite(1, 2);
+        sBar = UI_SS.getSprite(1, 1);
 
-        //Load fill dots for bars
+        //Load fill dot images for bars
         UI_SS.setPointer(13, 39, 200, 60);
-        healthDot = UI_SS.getSprite(2, 1);
-        shieldDot = UI_SS.getSprite(1, 1);
+        hDot = UI_SS.getSprite(2, 1);
+        sDot = UI_SS.getSprite(1, 1);
+
+        //Create status bars
+        healthBar = new StatusBar(hBar, hDot, gPanel, true, 560, 65);
+        shieldBar = new StatusBar(sBar, sDot, gPanel, false, 30, 65);
 
         //Load icons
         UI_SS.setPointer(30, 30, 0, 0);
@@ -175,11 +192,11 @@ public class ControlPanel extends JPanel{
         if(joystick != null) {
             g.drawImage(joystick, WIDTH/2-joystick.getWidth()/2, stickPos, null);
         }
-        if(healthBar != null) {
-            g.drawImage(healthBar, 560, 65, null);
+        if(hBar != null) {
+            healthBar.paint(g);
         }
-        if (shieldBar != null) {
-            g.drawImage(shieldBar, 30, 65, null);
+        if (sBar != null) {
+            shieldBar.paint(g);
         }
     }
     

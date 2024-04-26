@@ -11,8 +11,8 @@ public class Avatar extends Ship{
 
     //Intitial values used in game reset
     private static final double INITIAL_FIRE_RATE = 0.03;
-    private static final int INITIAL_HEALTH = 100;
-    private static final int INITIAL_SHIELD = 0;
+    private static final double INITIAL_HEALTH = 100;
+    private static final double INITIAL_SHIELD = 0;
     private static final int INITIAL_SPEED = 5;
     private static final int INITIAL_DAMAGE = 30;
     private static final int INITIAL_X = 725, INITIAL_Y = 200;
@@ -25,14 +25,15 @@ public class Avatar extends Ship{
     private static final int DAMAGE_INCREMENT = 20;
     private static final int PROJECTILE_CONVERSION = 8;
 
-    private SpriteSheet ships;          //Holds all ships
-    private SpriteSheet lasers;         //Holds all lasers
-    private int[] upgradeCounter;       //Counts individual stat upgrades to upgrade ship at threshold
-    private InputHolder input;          //Holds control issued by control panel
-    private double fireRate;            //Limit fire rate with increment
-    private double fireCount;           //Counter
-    private int shipTier;               //Used in determining current ship sprite
-    private boolean isBeamProjectile;   //Projectile type: beam or turret. Based on stat upgrades
+    private SpriteSheet ships;              //Holds all ships
+    private SpriteSheet lasers;             //Holds all lasers
+    private int[] upgradeCounter;           //Counts individual stat upgrades to upgrade ship at threshold
+    private InputHolder input;              //Holds control issued by control panel
+    private double fireRate;                //Limit fire rate with increment
+    private double fireCount;               //Counter
+    private int shipTier;                   //Used in determining current ship sprite
+    private boolean isBeamProjectile;       //Projectile type: beam or turret. Based on stat upgrades
+    private double maxHealth, maxShield;
 
     //Player avatar constructor
     public Avatar(SpriteSheet ships, SpriteSheet lasers, BufferedImage sprite, GamePanel gp, InputHolder input) {
@@ -46,9 +47,11 @@ public class Avatar extends Ship{
         this.fireCount = 0;
         this.shipTier = 1;
         this.isBeamProjectile = true;
+        this.maxHealth = INITIAL_HEALTH;
+        this.maxShield = INITIAL_SHIELD;
 
-        setHealth(INITIAL_HEALTH);
-        setshield(INITIAL_SHIELD);
+        setHealth(maxHealth);
+        setshield(maxShield);
         setSpeed(INITIAL_SPEED);
         setDamage(INITIAL_DAMAGE);
         setProjectileSprite(lasers.getSprite(1, 1));
@@ -95,10 +98,12 @@ public class Avatar extends Ship{
         this.fireRate = INITIAL_FIRE_RATE;
         this.fireCount = 0;
         this.shipTier = 1;
-        isBeamProjectile = true;
+        this.isBeamProjectile = true;
+        this.maxHealth = INITIAL_HEALTH;
+        this.maxShield = INITIAL_SHIELD;
         
-        setHealth(INITIAL_HEALTH);
-        setshield(INITIAL_SHIELD);
+        setHealth(maxHealth);
+        setshield(maxShield);
         setSpeed(INITIAL_SPEED);
         setDamage(INITIAL_DAMAGE);
         setDX(0);
@@ -244,6 +249,7 @@ public class Avatar extends Ship{
     }
 
     //Ship upgrades selected in menu increase by static increment
+    //Upgrade fire rate
     public void upgradeFireRate() {
         if (isBeamProjectile) {
             this.fireRate += FIRE_RATE_INCREMENT;
@@ -253,18 +259,30 @@ public class Avatar extends Ship{
         }
         upgradeCounter[0]++;
     }
+
+    //Upgrade health
     public void upgradeHealth() {
+        this.maxHealth += HEALTH_INCREMENT;
+
         setHealth(getHealth() + HEALTH_INCREMENT);
         upgradeCounter[1]++;
     }
+
+    //Upgrade shield
     public void upgradeShield() {
+        this.maxShield += SHIELD_INCREMENT;
+
         setshield(getshield() + SHIELD_INCREMENT);
         upgradeCounter[2]++;
     }
+
+    //Upgrade speed
     public void upgradeSpeed() {
         setSpeed(getSpeed() + SPEED_INCREMENT);
         upgradeCounter[3]++;
     }
+
+    //Upgrade damage
     public void upgradeDamage() {
         if (isBeamProjectile) {
             setDamage(getDamage() + DAMAGE_INCREMENT);
@@ -273,6 +291,16 @@ public class Avatar extends Ship{
             setDamage(getDamage() + DAMAGE_INCREMENT / PROJECTILE_CONVERSION);
         }
         upgradeCounter[4]++;
+    }
+
+    //Get max health
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    //Get max shield
+    public double getMaxShield() {
+        return maxShield;
     }
 
     //Call parent class overloaded method with rotation

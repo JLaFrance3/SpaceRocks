@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 abstract class Ship extends Mover{
     
     
-    private int shield;          //Damage negation
+    private double shield;          //Damage negation
 
     private BufferedImage projectileSprite;     //Projectile sprite
 
@@ -31,7 +31,7 @@ abstract class Ship extends Mover{
     }
 
     //Returns entity shield
-    public int getshield() {
+    public double getshield() {
         return shield;
     }
 
@@ -53,7 +53,7 @@ abstract class Ship extends Mover{
     }
 
     //Sets shield
-    public void setshield(int shield) {
+    public void setshield(double shield) {
         this.shield = shield;
     }
 
