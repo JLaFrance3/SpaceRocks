@@ -147,11 +147,11 @@ public class ObjectManager {
         //Player tick
         player.tick();
 
-        //Check out of bounds
+        //Tick all and check out of bounds
         checkOOB();
         
+        //Check for any collisions and calculate damage
         checkCollision();
-
 
         //Add to score based on rock size value
         for (Rock r : delHostile) {

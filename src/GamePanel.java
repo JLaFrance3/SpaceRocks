@@ -73,7 +73,7 @@ public class GamePanel extends JPanel{
 
     //Start game
     public void start() {
-        timer.start();
+        unpause();
     }
 
     //Game clock
