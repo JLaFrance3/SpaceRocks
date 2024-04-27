@@ -411,7 +411,7 @@ public class ObjectManager {
             if (p.getX() < -20 || p.getX() > 820) {
                 delFriendly.add(p);
             }
-            if(p.getY() < -30 || p.getY() > 520) {
+            if(p.getY() < -40 || p.getY() > 540) {
                 delFriendly.add(p);
             }
         }
