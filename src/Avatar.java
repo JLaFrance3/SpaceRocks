@@ -218,6 +218,8 @@ public class Avatar extends Ship{
                 if (sum >= 16) {
                     setSprite(ships.getSprite(9, 1));
                     shipTier++;
+
+                    createMask(36, 50);
                 }
                 break;
         } 

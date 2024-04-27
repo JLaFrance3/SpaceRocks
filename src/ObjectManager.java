@@ -200,39 +200,39 @@ public class ObjectManager {
         switch (difficulty) {
             case 2:
                 //Hard
-                weight[0] = 0.9;
-                weight[1] = 0.08;
                 weight[2] = 0.02;
+                weight[1] = 0.08;
+                weight[0] = 1.0 - weight[1] - weight[2];
                 spawnRate = 5;
                 waveMaxValue = 220;
                 waveValueIncrement = 50;
-                weightIncrements[0] = -0.006;
-                weightIncrements[1] = 0.004;
                 weightIncrements[2] = 0.002;
+                weightIncrements[1] = 0.004;
+                weightIncrements[0] = -weight[1]-weight[2];
                 break;
             case 1:
                 //Medium
-                weight[0] = 0.92;
-                weight[1] = 0.07;
                 weight[2] = 0.01;
+                weight[1] = 0.07;
+                weight[0] = 1.0 - weight[1] - weight[2];
                 spawnRate = 10;
                 waveMaxValue = 160;
                 waveValueIncrement = 40;
-                weightIncrements[0] = -0.0045;
-                weightIncrements[1] = 0.003;
                 weightIncrements[2] = 0.0015;
+                weightIncrements[1] = 0.003;
+                weightIncrements[0] = -weight[1]-weight[2];
                 break;
             default:
                 //Easy
-                weight[0] = 0.95;
-                weight[1] = 0.05;
                 weight[2] = 0.00;
+                weight[1] = 0.05;
+                weight[0] = 1.0 - weight[1] - weight[2];
                 spawnRate = 15;
                 waveMaxValue = 60;
                 waveValueIncrement = 30;
-                weightIncrements[0] = -0.003;
-                weightIncrements[1] = 0.002;
                 weightIncrements[2] = 0.001;
+                weightIncrements[1] = 0.002;
+                weightIncrements[0] = -weight[1]-weight[2];
                 break;
         }
 
