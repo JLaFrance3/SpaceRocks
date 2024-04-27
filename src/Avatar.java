@@ -4,6 +4,7 @@
  * Player character
  */
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -16,7 +17,6 @@ public class Avatar extends Ship{
     private static final int INITIAL_SPEED = 5;
     private static final double INITIAL_DAMAGE = 30;
     private static final int INITIAL_X = 725, INITIAL_Y = 200;
-    private static final int SHIELD_DELAY = 50;
 
     //Stat upgrade values
     private static final double FIRE_RATE_INCREMENT = 0.01;
@@ -29,6 +29,7 @@ public class Avatar extends Ship{
     private SpriteSheet ships;              //Holds all ships
     private SpriteSheet lasers;             //Holds all lasers
     private BufferedImage shieldSprite;     //Shield animation on hit
+    private float shieldAlpha;              //Used to fade out shield
     private int[] upgradeCounter;           //Counts individual stat upgrades to upgrade ship at threshold
     private InputHolder input;              //Holds control issued by control panel
     private double fireRate;                //Limit fire rate with increment
@@ -46,6 +47,7 @@ public class Avatar extends Ship{
         this.ships = ships;
         this.lasers = lasers;
         this.shieldSprite = shieldSprite;
+        this.shieldAlpha = 1.0f;
         this.upgradeCounter = new int[] {0, 0, 0, 0, 0};
         this.input = input;
         this.fireRate = INITIAL_FIRE_RATE;
@@ -92,13 +94,17 @@ public class Avatar extends Ship{
             }
         }
 
+        //Shield animation
         if (shieldUp) {
-            if (shieldCounter < SHIELD_DELAY) {
+            if (shieldCounter < 9) {
                 shieldCounter++;
+                shieldAlpha -= 0.1f;
             }
-
-            shieldCounter = 0;
-            shieldAnim(false);
+            else {
+                shieldCounter = 0;
+                shieldAlpha = 1.0f;
+                shieldAnim(false);
+            }
         }
 
         //Adjust position
@@ -333,7 +339,10 @@ public class Avatar extends Ship{
         super.paint(brush, getRotation());
 
         if (shieldUp) {
+            //Change graphics2d alpha, draw shield, reset alpha to full
+            brush.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, shieldAlpha));
             brush.drawImage(shieldSprite, getX(), getY() - 10, null);
+            brush.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
     }
 }

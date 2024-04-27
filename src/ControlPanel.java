@@ -172,8 +172,8 @@ public class ControlPanel extends JPanel{
 
     //Update health/shield bar totals
     public void updateStatusBars() {
-        healthBar.getTotalValue();
-        shieldBar.getTotalValue();
+        healthBar.updateTotalValue();
+        shieldBar.updateTotalValue();
     }
 
     //Reset to initial values

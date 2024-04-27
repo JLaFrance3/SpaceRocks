@@ -29,7 +29,7 @@ public class StatusBar {
     }
 
     public void init() {
-        totalValue = getTotalValue();
+        updateTotalValue();
         currentValue = totalValue;
     }
 
@@ -50,7 +50,7 @@ public class StatusBar {
     }
 
     //Gets health/shield upon
-    public double getTotalValue() {
+    public void updateTotalValue() {
         double value = 0;
 
         if (isHealth) {
@@ -60,7 +60,7 @@ public class StatusBar {
             value = gp.getPlayerMaxShield();
         }
 
-        return value;
+        totalValue = value;
     }
 
     public void paint(Graphics g) {
