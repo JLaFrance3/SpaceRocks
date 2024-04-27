@@ -20,6 +20,8 @@ abstract class Ship extends Mover{
         
         this.shield = 0;
         this.projectileSprite = null;
+
+        createMask();
     }
 
     //Abstract methods

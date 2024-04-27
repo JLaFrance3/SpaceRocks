@@ -147,11 +147,11 @@ public class ObjectManager {
         //Player tick
         player.tick();
 
-        //Check out of bounds
+        //Tick all and check out of bounds
         checkOOB();
         
+        //Check for any collisions and calculate damage
         checkCollision();
-
 
         //Add to score based on rock size value
         for (Rock r : delHostile) {
@@ -200,39 +200,39 @@ public class ObjectManager {
         switch (difficulty) {
             case 2:
                 //Hard
-                weight[0] = 0.9;
-                weight[1] = 0.08;
                 weight[2] = 0.02;
+                weight[1] = 0.08;
+                weight[0] = 1.0 - weight[1] - weight[2];
                 spawnRate = 5;
                 waveMaxValue = 220;
                 waveValueIncrement = 50;
-                weightIncrements[0] = -0.006;
-                weightIncrements[1] = 0.004;
                 weightIncrements[2] = 0.002;
+                weightIncrements[1] = 0.004;
+                weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
                 break;
             case 1:
                 //Medium
-                weight[0] = 0.92;
-                weight[1] = 0.07;
                 weight[2] = 0.01;
+                weight[1] = 0.07;
+                weight[0] = 1.0 - weight[1] - weight[2];
                 spawnRate = 10;
                 waveMaxValue = 160;
                 waveValueIncrement = 40;
-                weightIncrements[0] = -0.0045;
-                weightIncrements[1] = 0.003;
                 weightIncrements[2] = 0.0015;
+                weightIncrements[1] = 0.003;
+                weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
                 break;
             default:
                 //Easy
-                weight[0] = 0.95;
-                weight[1] = 0.05;
                 weight[2] = 0.00;
+                weight[1] = 0.05;
+                weight[0] = 1.0 - weight[1] - weight[2];
                 spawnRate = 15;
                 waveMaxValue = 60;
                 waveValueIncrement = 30;
-                weightIncrements[0] = -0.003;
-                weightIncrements[1] = 0.002;
                 weightIncrements[2] = 0.001;
+                weightIncrements[1] = 0.002;
+                weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
                 break;
         }
 
@@ -411,7 +411,7 @@ public class ObjectManager {
             if (p.getX() < -20 || p.getX() > 820) {
                 delFriendly.add(p);
             }
-            if(p.getY() < -20 || p.getY() > 520) {
+            if(p.getY() < -40 || p.getY() > 540) {
                 delFriendly.add(p);
             }
         }
