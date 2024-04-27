@@ -194,6 +194,7 @@ public class Menu extends JPanel implements MouseListener{
         g.drawImage(currentBackground, 0, 0, null);
     }
 
+    @SuppressWarnings("incomplete-switch")
     @Override
     public void mousePressed(MouseEvent e) {
 
@@ -309,9 +310,11 @@ public class Menu extends JPanel implements MouseListener{
             }
             else if (e.getSource() == upgradeButtons[2]) {
                 gPanel.upgradeShield();
+                cPanel.updateStatusBars();
             }
             else if (e.getSource() == upgradeButtons[3]) {
                 gPanel.upgradeHealth();
+                cPanel.updateStatusBars();
             }
             else if (e.getSource() == upgradeButtons[4]) {
                 gPanel.upgradeDamage();

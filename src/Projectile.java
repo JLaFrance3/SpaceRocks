@@ -25,6 +25,7 @@ public class Projectile extends Mover{
         setDX(-getSpeed());
     }
 
+    @Override
     public void paint(Graphics2D brush) {
         super.paint(brush, getRotation());
     }

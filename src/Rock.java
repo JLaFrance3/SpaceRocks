@@ -22,7 +22,7 @@ public class Rock extends Mover {
     public Rock(BufferedImage[] rocks, GamePanel gp, int x, int y, int type) {
         super(rocks[0], gp, x, y);
 
-        //Randomize rock type by generating random start index for animation
+        //Randomize rock animation by generating random start index
         int startIndex = (int)(Math.random() * rocks.length / 16) * 16;
 
         //Randomize animation speed 2-5
@@ -31,6 +31,27 @@ public class Rock extends Mover {
         //Create new animation
         animation = new Animation(rocks, animSpeed, 16, startIndex, randomDirection());
         this.type = type;
+
+        //Health/damage based on type
+        switch (type) {
+            case 0:
+                setDamage(30);
+                setHealth(30);
+                break;
+            case 1:
+                setDamage(100);
+                setHealth(100);
+                break;
+            case 2:
+                setDamage(400);
+                setHealth(400);
+
+                //Needs a smaller mask
+                createMask(120, 120);
+
+                break;
+        }
+        
     }
 
     //Will determine animation rotation
@@ -54,6 +75,7 @@ public class Rock extends Mover {
         setSprite(animation.getSprite());
     }
 
+    @Override
     public void paint(Graphics2D brush) {
         super.paint(brush, getRotation());
     }

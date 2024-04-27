@@ -51,8 +51,6 @@ public class GamePanel extends JPanel{
         this.menu = menu;
         this.cp = cp;
 
-        manager.init();
-
         try {
             background = loader.load("res/BlueBackground1.png");
             shipSS = loader.load("res/ShipSheet.png");
@@ -62,11 +60,12 @@ public class GamePanel extends JPanel{
             lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
 
             player = new Avatar(ships, lasers, ships.getSprite(1, 1), this, input);
-            manager.addFriendly(player);
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
+
+        manager.init(player);
     }
 
     //Start game
@@ -95,7 +94,6 @@ public class GamePanel extends JPanel{
         input.clear();
         player.reset();
         manager.reset();
-        manager.addFriendly(player);
 
         if (menu.getState() == Menu.STATE.MAIN) {
             pause();
@@ -150,7 +148,7 @@ public class GamePanel extends JPanel{
 
     //Get current player shield
     public double getPlayerShield() {
-        return player.getshield();
+        return player.getShield();
     }
 
     //Get player maximum health

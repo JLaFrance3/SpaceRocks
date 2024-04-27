@@ -12,9 +12,9 @@ public class Avatar extends Ship{
     //Intitial values used in game reset
     private static final double INITIAL_FIRE_RATE = 0.03;
     private static final double INITIAL_HEALTH = 100;
-    private static final double INITIAL_SHIELD = 0;
+    private static final double INITIAL_SHIELD = 60;
     private static final int INITIAL_SPEED = 5;
-    private static final int INITIAL_DAMAGE = 30;
+    private static final double INITIAL_DAMAGE = 30;
     private static final int INITIAL_X = 725, INITIAL_Y = 200;
 
     //Stat upgrade values
@@ -22,8 +22,8 @@ public class Avatar extends Ship{
     private static final int HEALTH_INCREMENT = 20;
     private static final int SHIELD_INCREMENT = 20;
     private static final int SPEED_INCREMENT = 1;
-    private static final int DAMAGE_INCREMENT = 20;
-    private static final int PROJECTILE_CONVERSION = 8;
+    private static final double DAMAGE_INCREMENT = 20;
+    private static final double PROJECTILE_CONVERSION = 8.0;
 
     private SpriteSheet ships;              //Holds all ships
     private SpriteSheet lasers;             //Holds all lasers
@@ -51,13 +51,14 @@ public class Avatar extends Ship{
         this.maxShield = INITIAL_SHIELD;
 
         setHealth(maxHealth);
-        setshield(maxShield);
+        setShield(maxShield);
         setSpeed(INITIAL_SPEED);
         setDamage(INITIAL_DAMAGE);
         setProjectileSprite(lasers.getSprite(1, 1));
     }
 
     //Game tick
+    @Override
     public void tick() {
 
         //Adjust velocity based on user input
@@ -103,7 +104,7 @@ public class Avatar extends Ship{
         this.maxShield = INITIAL_SHIELD;
         
         setHealth(maxHealth);
-        setshield(maxShield);
+        setShield(maxShield);
         setSpeed(INITIAL_SPEED);
         setDamage(INITIAL_DAMAGE);
         setDX(0);
@@ -114,7 +115,7 @@ public class Avatar extends Ship{
         setProjectileSprite(lasers.getSprite(1, 1));
         setSprite(ships.getSprite(1, 1));
 
-        super.createMask();
+        createMask();
     }
 
     //Returns rate of fire multiplier
@@ -128,6 +129,7 @@ public class Avatar extends Ship{
     }
 
     //Fire projectiles
+    @Override
     public void shoot() {
         //Check user input
         if(input.isShooting()) {
@@ -136,6 +138,8 @@ public class Avatar extends Ship{
             //Limit fire rate
             if(fireCount >=1) {
                 Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this, isBeamProjectile);
+                projectile.setHealth(getDamage());
+                projectile.setDamage(getDamage());
                 getGP().getObjectManager().addFriendly(projectile);
                 fireCount--;
             }
@@ -272,7 +276,7 @@ public class Avatar extends Ship{
     public void upgradeShield() {
         this.maxShield += SHIELD_INCREMENT;
 
-        setshield(getshield() + SHIELD_INCREMENT);
+        setShield(getShield() + SHIELD_INCREMENT);
         upgradeCounter[2]++;
     }
 
@@ -304,6 +308,7 @@ public class Avatar extends Ship{
     }
 
     //Call parent class overloaded method with rotation
+    @Override
     public void paint(Graphics2D brush) {
         super.paint(brush, getRotation());
     }

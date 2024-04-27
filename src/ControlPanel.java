@@ -156,7 +156,8 @@ public class ControlPanel extends JPanel{
     public void tick() {
         scoreLabel.setText("SCORE: " + gPanel.getScore());
 
-        //TODO: Update health/shield bars
+        healthBar.tick();
+        shieldBar.tick();
     }
 
     //Set difficulty. Used by menu.
@@ -167,6 +168,12 @@ public class ControlPanel extends JPanel{
     //Solved focus issues
     public void focus() {
         this.requestFocus();
+    }
+
+    //Update health/shield bar totals
+    public void updateStatusBars() {
+        healthBar.getTotalValue();
+        shieldBar.getTotalValue();
     }
 
     //Reset to initial values
@@ -213,6 +220,7 @@ public class ControlPanel extends JPanel{
         }
 
         //Pass commands to input holder based on keypress
+        @SuppressWarnings("incomplete-switch")
         @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_SPACE) {

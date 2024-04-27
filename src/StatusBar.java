@@ -13,7 +13,6 @@ public class StatusBar {
     private BufferedImage dot;      //Dot that fills bar
     private GamePanel gp;           //Main game panel
     private boolean isHealth;       //Either health or shield
-    private boolean fromLeft;       //Dots filled from left or right
     private int x, y;               //Bar position on panel
     private double totalValue;      //Total health/shield value
     private double currentValue;    //Current health/shield
@@ -23,7 +22,6 @@ public class StatusBar {
         this.dot = dot;
         this.gp = gp;
         this.isHealth = isHealth;
-        this.fromLeft = true;
         this.x = x;
         this.y = y;
         this.totalValue = 0;
@@ -40,18 +38,17 @@ public class StatusBar {
         if (totalValue <= 0) {
             init();
         }
-
-        //Get updated health/shield value
-        if (isHealth) {
-            currentValue = gp.getPlayerHealth();
-        }
         else {
-            currentValue = gp.getPlayerShield();
+            //Get updated health/shield value
+            if (isHealth) {
+                currentValue = gp.getPlayerHealth();
+            }
+            else {
+                currentValue = gp.getPlayerShield();
+            }
         }
-
     }
 
-    //TODO: Menu needs to call this on upgrade
     //Gets health/shield upon
     public double getTotalValue() {
         double value = 0;
@@ -66,11 +63,6 @@ public class StatusBar {
         return value;
     }
 
-    //Reverse dot fill direction
-    public void setDirection(boolean fromLeft) {
-        this.fromLeft = fromLeft;
-    }
-
     public void paint(Graphics g) {
         //Paint bar at x, y
         g.drawImage(bar, x, y, null);
@@ -78,10 +70,7 @@ public class StatusBar {
         //Shield bar
         if (!isHealth) {
             for(int i = 0; i < 11; i++) {
-                //paint dot at ...
-                //x+5, y+65
-                //iter: x + 14
-                if (currentValue >= totalValue / 11 * i) {
+                if (currentValue > totalValue / 11 * i) {
                     g.drawImage(dot, x + 5 + (14 * i), y + 5, null);
                 }
             }
@@ -89,8 +78,8 @@ public class StatusBar {
         //Health bar reverse direction
         else {
             for(int i = 11; i > 0; i--) {
-                if (currentValue >= totalValue / 11 * i) {
-                    g.drawImage(dot, x + 28 + (14 * i), y + 5, null);
+                if (currentValue > totalValue / 11 * (i-1)) {
+                    g.drawImage(dot, x + 196 - (14 * i), y + 5, null);
                 }
             }
         }

@@ -115,6 +115,18 @@ abstract class Mover {
         this.mask = r;
     }
 
+    //Create rectangle based on given width height
+    public void createMask(int maskWidth, int maskHeight) {
+        int spriteWidth = sprite.getWidth();
+        int spriteHeight = sprite.getHeight();
+        int newX, newY;
+
+        newX = x + (spriteWidth - maskWidth) / 2;
+        newY = y + (spriteHeight - maskHeight) / 2;
+
+        this.mask = new Rectangle(newX, newY, maskWidth, maskHeight);;
+    }
+
     //Game tick
     public void tick() {
         x+=dX;
