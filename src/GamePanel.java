@@ -30,9 +30,9 @@ public class GamePanel extends JPanel{
 
     private ObjectManager manager;              //Game manager
 
-    //Used to limit tick speed variance
+    //Limit game speed variance
     private long lastTime;
-    private final double NS = 1000000000 / 60.0;
+    private final double NS_TICK = 1000000000 / 30.0;
     private double delta;
     private long nowTime;
 
@@ -49,9 +49,9 @@ public class GamePanel extends JPanel{
         this.player = null;
         this.manager = new ObjectManager(this);
 
-        lastTime = System.nanoTime();
-        delta = 0;
-        nowTime = 0;
+        this.lastTime = System.nanoTime();
+        this.delta = 0;
+        this.nowTime = 0;
     }
 
     //Initialize
@@ -89,7 +89,7 @@ public class GamePanel extends JPanel{
     //Game clock
     public void tick() {
         nowTime = System.nanoTime();
-        delta += (nowTime - lastTime) / NS;
+        delta += (nowTime - lastTime) / NS_TICK;
         lastTime = nowTime;
 
         if (delta >= 1) {
