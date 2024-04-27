@@ -117,8 +117,10 @@ public class Avatar extends Ship{
     //Reset to initial values
     public void reset() {
         for(int i = 0; i < upgradeCounter.length; i++) upgradeCounter[i] = 0;
+        this.shieldAlpha = 1.0f;
         this.fireRate = INITIAL_FIRE_RATE;
         this.fireCount = 0;
+        this.shieldCounter = 0;
         this.shipTier = 1;
         this.isBeamProjectile = true;
         this.maxHealth = INITIAL_HEALTH;

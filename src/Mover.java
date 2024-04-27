@@ -13,7 +13,7 @@ import java.awt.Shape;
 
 abstract class Mover {
 
-    private final boolean displayHitbox = false;    //Used for debugging
+    private final boolean displayHitbox = true;    //Used for debugging
 
     private int speed;              //Use to determine dX and dY
     private int x, y;               //Position
