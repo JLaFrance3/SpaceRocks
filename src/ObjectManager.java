@@ -122,7 +122,7 @@ public class ObjectManager {
                 tickCounter = 0;
 
                 //Random rock size determined by weighted values
-                for(double r = Math.random(); rockIndex < rockWeight.length; rockIndex++) {
+                for(double r = Math.random(); rockIndex < rockWeight.length - 1; rockIndex++) {
                     r -= rockWeight[rockIndex];
                     if (r <= 0) {
                         break;
@@ -411,7 +411,7 @@ public class ObjectManager {
             if (p.getX() < -20 || p.getX() > 820) {
                 delFriendly.add(p);
             }
-            if(p.getY() < -20 || p.getY() > 520) {
+            if(p.getY() < -30 || p.getY() > 520) {
                 delFriendly.add(p);
             }
         }
