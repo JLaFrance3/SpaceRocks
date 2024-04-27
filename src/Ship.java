@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 abstract class Ship extends Mover{
     
     
-    private int shield;          //Damage negation
+    private double shield;          //Damage negation
 
     private BufferedImage projectileSprite;     //Projectile sprite
 
@@ -26,12 +26,13 @@ abstract class Ship extends Mover{
     public abstract void shoot();
 
     //Game tick
+    @Override
     public void tick() {
         super.tick();
     }
 
     //Returns entity shield
-    public int getshield() {
+    public double getShield() {
         return shield;
     }
 
@@ -46,6 +47,7 @@ abstract class Ship extends Mover{
     }
 
     //Set ship sprite
+    @Override
     public void setSprite(BufferedImage sprite) {
         super.setSprite(sprite);
 
@@ -53,11 +55,12 @@ abstract class Ship extends Mover{
     }
 
     //Sets shield
-    public void setshield(int shield) {
+    public void setShield(double shield) {
         this.shield = shield;
     }
 
     //Paint method allowing for rotation of sprites
+    @Override
     public void paint(Graphics2D brush, int rotation) {
         super.paint(brush, rotation);
     }

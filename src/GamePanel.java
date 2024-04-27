@@ -25,6 +25,7 @@ public class GamePanel extends JPanel{
     private BufferedImage background;           //Current background image
     private SpriteSheet ships;                  //Image containg all ships
     private SpriteSheet lasers;                 //Image containing all projectiles
+    private BufferedImage shieldSprite;         //Image used for player shield animation
     private Avatar player;                      //Player avatar
 
     private ObjectManager manager;
@@ -38,6 +39,7 @@ public class GamePanel extends JPanel{
         this.background = null;
         this.ships = null;
         this.lasers = null;
+        this.shieldSprite = null;
         this.player = null;
         this.manager = new ObjectManager(this);
     }
@@ -51,22 +53,22 @@ public class GamePanel extends JPanel{
         this.menu = menu;
         this.cp = cp;
 
-        manager.init();
-
         try {
             background = loader.load("res/BlueBackground1.png");
             shipSS = loader.load("res/ShipSheet.png");
             projectileSS = loader.load("res/ProjectileSheet.png");
+            shieldSprite = loader.load("res/Shield.png");
 
             ships = new SpriteSheet(shipSS, 59, 47);
             lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
 
-            player = new Avatar(ships, lasers, ships.getSprite(1, 1), this, input);
-            manager.addFriendly(player);
+            player = new Avatar(ships, lasers, shieldSprite, this, input);
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
+
+        manager.init(player);
     }
 
     //Start game
@@ -95,7 +97,6 @@ public class GamePanel extends JPanel{
         input.clear();
         player.reset();
         manager.reset();
-        manager.addFriendly(player);
 
         if (menu.getState() == Menu.STATE.MAIN) {
             pause();
@@ -133,18 +134,41 @@ public class GamePanel extends JPanel{
         player.checkShipUpgrade();
     }
 
-    //Getters
+    //Get object manager
     public ObjectManager getObjectManager() {
         return manager;
     }
+
+    //Get current score
     public int getScore() {
         return manager.getScore();
     }
 
-    //Timer stop/start
+    //Get current player health
+    public double getPlayerHealth() {
+        return player.getHealth();
+    }
+
+    //Get current player shield
+    public double getPlayerShield() {
+        return player.getShield();
+    }
+
+    //Get player maximum health
+    public double getPlayerMaxHealth() {
+        return player.getMaxHealth();
+    }
+
+    //Get player maximum shield
+    public double getPlayerMaxShield() {
+        return player.getMaxShield();
+    }
+
+    //Timer stop
     public void pause() {
         timer.stop();
     }
+    //Timer start
     public void unpause() {
         timer.start();
     }

@@ -4,6 +4,7 @@
  * Player character
  */
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -11,10 +12,10 @@ public class Avatar extends Ship{
 
     //Intitial values used in game reset
     private static final double INITIAL_FIRE_RATE = 0.03;
-    private static final int INITIAL_HEALTH = 100;
-    private static final int INITIAL_SHIELD = 0;
+    private static final double INITIAL_HEALTH = 100;
+    private static final double INITIAL_SHIELD = 60;
     private static final int INITIAL_SPEED = 5;
-    private static final int INITIAL_DAMAGE = 30;
+    private static final double INITIAL_DAMAGE = 30;
     private static final int INITIAL_X = 725, INITIAL_Y = 200;
 
     //Stat upgrade values
@@ -22,39 +23,50 @@ public class Avatar extends Ship{
     private static final int HEALTH_INCREMENT = 20;
     private static final int SHIELD_INCREMENT = 20;
     private static final int SPEED_INCREMENT = 1;
-    private static final int DAMAGE_INCREMENT = 20;
-    private static final int PROJECTILE_CONVERSION = 8;
+    private static final double DAMAGE_INCREMENT = 20;
+    private static final double PROJECTILE_CONVERSION = 8.0;
 
-    private SpriteSheet ships;          //Holds all ships
-    private SpriteSheet lasers;         //Holds all lasers
-    private int[] upgradeCounter;       //Counts individual stat upgrades to upgrade ship at threshold
-    private InputHolder input;          //Holds control issued by control panel
-    private double fireRate;            //Limit fire rate with increment
-    private double fireCount;           //Counter
-    private int shipTier;               //Used in determining current ship sprite
-    private boolean isBeamProjectile;   //Projectile type: beam or turret. Based on stat upgrades
+    private SpriteSheet ships;              //Holds all ships
+    private SpriteSheet lasers;             //Holds all lasers
+    private BufferedImage shieldSprite;     //Shield animation on hit
+    private float shieldAlpha;              //Used to fade out shield
+    private int[] upgradeCounter;           //Counts individual stat upgrades to upgrade ship at threshold
+    private InputHolder input;              //Holds control issued by control panel
+    private double fireRate;                //Limit fire rate with increment
+    private double fireCount;               //Counter for fire rate
+    private int shieldCounter;              //Counter for shield animation
+    private boolean shieldUp;               //Used for painting shield
+    private int shipTier;                   //Used in determining current ship sprite
+    private boolean isBeamProjectile;       //Projectile type: beam or turret. Based on stat upgrades
+    private double maxHealth, maxShield;    //Max values used by health/shield status bars
 
     //Player avatar constructor
-    public Avatar(SpriteSheet ships, SpriteSheet lasers, BufferedImage sprite, GamePanel gp, InputHolder input) {
-        super(sprite, gp, INITIAL_X, INITIAL_Y, -90);
+    public Avatar(SpriteSheet ships, SpriteSheet lasers, BufferedImage shieldSprite, GamePanel gp, InputHolder input) {
+        super(ships.getSprite(1, 1), gp, INITIAL_X, INITIAL_Y, -90);
 
         this.ships = ships;
         this.lasers = lasers;
+        this.shieldSprite = shieldSprite;
+        this.shieldAlpha = 1.0f;
         this.upgradeCounter = new int[] {0, 0, 0, 0, 0};
         this.input = input;
         this.fireRate = INITIAL_FIRE_RATE;
         this.fireCount = 0;
+        this.shieldCounter = 0;
         this.shipTier = 1;
         this.isBeamProjectile = true;
+        this.maxHealth = INITIAL_HEALTH;
+        this.maxShield = INITIAL_SHIELD;
 
-        setHealth(INITIAL_HEALTH);
-        setshield(INITIAL_SHIELD);
+        setHealth(maxHealth);
+        setShield(maxShield);
         setSpeed(INITIAL_SPEED);
         setDamage(INITIAL_DAMAGE);
         setProjectileSprite(lasers.getSprite(1, 1));
     }
 
     //Game tick
+    @Override
     public void tick() {
 
         //Adjust velocity based on user input
@@ -82,6 +94,19 @@ public class Avatar extends Ship{
             }
         }
 
+        //Shield animation
+        if (shieldUp) {
+            if (shieldCounter < 9) {
+                shieldCounter++;
+                shieldAlpha -= 0.1f;
+            }
+            else {
+                shieldCounter = 0;
+                shieldAlpha = 1.0f;
+                shieldAnim(false);
+            }
+        }
+
         //Adjust position
         super.tick();
 
@@ -95,10 +120,12 @@ public class Avatar extends Ship{
         this.fireRate = INITIAL_FIRE_RATE;
         this.fireCount = 0;
         this.shipTier = 1;
-        isBeamProjectile = true;
+        this.isBeamProjectile = true;
+        this.maxHealth = INITIAL_HEALTH;
+        this.maxShield = INITIAL_SHIELD;
         
-        setHealth(INITIAL_HEALTH);
-        setshield(INITIAL_SHIELD);
+        setHealth(maxHealth);
+        setShield(maxShield);
         setSpeed(INITIAL_SPEED);
         setDamage(INITIAL_DAMAGE);
         setDX(0);
@@ -109,7 +136,7 @@ public class Avatar extends Ship{
         setProjectileSprite(lasers.getSprite(1, 1));
         setSprite(ships.getSprite(1, 1));
 
-        super.createMask();
+        createMask();
     }
 
     //Returns rate of fire multiplier
@@ -123,6 +150,7 @@ public class Avatar extends Ship{
     }
 
     //Fire projectiles
+    @Override
     public void shoot() {
         //Check user input
         if(input.isShooting()) {
@@ -131,6 +159,8 @@ public class Avatar extends Ship{
             //Limit fire rate
             if(fireCount >=1) {
                 Projectile projectile = new Projectile(getProjectileSprite(), getGP(), this, isBeamProjectile);
+                projectile.setHealth(getDamage());
+                projectile.setDamage(getDamage());
                 getGP().getObjectManager().addFriendly(projectile);
                 fireCount--;
             }
@@ -243,7 +273,13 @@ public class Avatar extends Ship{
         }
     }
 
+    //Shield animation
+    public void shieldAnim(Boolean b) {
+        shieldUp = b;
+    }
+
     //Ship upgrades selected in menu increase by static increment
+    //Upgrade fire rate
     public void upgradeFireRate() {
         if (isBeamProjectile) {
             this.fireRate += FIRE_RATE_INCREMENT;
@@ -253,18 +289,30 @@ public class Avatar extends Ship{
         }
         upgradeCounter[0]++;
     }
+
+    //Upgrade health
     public void upgradeHealth() {
+        this.maxHealth += HEALTH_INCREMENT;
+
         setHealth(getHealth() + HEALTH_INCREMENT);
         upgradeCounter[1]++;
     }
+
+    //Upgrade shield
     public void upgradeShield() {
-        setshield(getshield() + SHIELD_INCREMENT);
+        this.maxShield += SHIELD_INCREMENT;
+
+        setShield(getShield() + SHIELD_INCREMENT);
         upgradeCounter[2]++;
     }
+
+    //Upgrade speed
     public void upgradeSpeed() {
         setSpeed(getSpeed() + SPEED_INCREMENT);
         upgradeCounter[3]++;
     }
+
+    //Upgrade damage
     public void upgradeDamage() {
         if (isBeamProjectile) {
             setDamage(getDamage() + DAMAGE_INCREMENT);
@@ -275,8 +323,26 @@ public class Avatar extends Ship{
         upgradeCounter[4]++;
     }
 
+    //Get max health
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    //Get max shield
+    public double getMaxShield() {
+        return maxShield;
+    }
+
     //Call parent class overloaded method with rotation
+    @Override
     public void paint(Graphics2D brush) {
         super.paint(brush, getRotation());
+
+        if (shieldUp) {
+            //Change graphics2d alpha, draw shield, reset alpha to full
+            brush.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, shieldAlpha));
+            brush.drawImage(shieldSprite, getX(), getY() - 10, null);
+            brush.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        }
     }
 }

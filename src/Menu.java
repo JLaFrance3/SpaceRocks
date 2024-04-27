@@ -19,7 +19,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 public class Menu extends JPanel implements MouseListener{
@@ -48,7 +47,6 @@ public class Menu extends JPanel implements MouseListener{
     private JLabel scoreLabel;                  //Displays score at end of game
     private ButtonListener buttonListener;      //Upgrade button listener
     private JButton[] upgradeButtons;           //Buttons for upgrading ship stats
-    private ImageIcon icon;                     //Upgrade button icon
 
     public Menu(GamePanel gPanel, ControlPanel cp) {
         //Initialize
@@ -63,7 +61,6 @@ public class Menu extends JPanel implements MouseListener{
         this.scoreLabel = new JLabel("SCORE: 0", SwingConstants.CENTER);
         this.buttonListener = new ButtonListener();
         this.upgradeButtons = new JButton[5];
-        this.icon = null;
 
         //Score label settings
         scoreLabel.setBounds(100, 310, 194, 20);
@@ -197,6 +194,7 @@ public class Menu extends JPanel implements MouseListener{
         g.drawImage(currentBackground, 0, 0, null);
     }
 
+    @SuppressWarnings("incomplete-switch")
     @Override
     public void mousePressed(MouseEvent e) {
 
@@ -274,8 +272,6 @@ public class Menu extends JPanel implements MouseListener{
     }
 
     public void setButtonIcon(ImageIcon icon) {
-        this.icon = icon;
-
         for(int i = 0; i < upgradeButtons.length; i++) {
             upgradeButtons[i].setIcon(icon);
         }
@@ -314,9 +310,11 @@ public class Menu extends JPanel implements MouseListener{
             }
             else if (e.getSource() == upgradeButtons[2]) {
                 gPanel.upgradeShield();
+                cPanel.updateStatusBars();
             }
             else if (e.getSource() == upgradeButtons[3]) {
                 gPanel.upgradeHealth();
+                cPanel.updateStatusBars();
             }
             else if (e.getSource() == upgradeButtons[4]) {
                 gPanel.upgradeDamage();

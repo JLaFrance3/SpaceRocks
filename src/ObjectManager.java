@@ -8,45 +8,51 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class ObjectManager {
     private static final int waveDelay = 350;       //Tick delay between spawn waves
 
-    private ArrayList<Mover> friendly;              //Friendly movers(playeravatar, projectiles)
-    private ArrayList<Mover> hostile;               //Hostile movers(rocks, enemies, projectiles)
-    private ArrayList<Mover> delHostile;            //Hostiles to be deleted from arraylist
-    private ArrayList<Mover> delFriendly;           //Friendlies to be deleted from arraylist
-    private ArrayList<Rock> scoreList;              //Used for calculating score
-    private GamePanel gp;                           //Game Panel
-    private Random rand;                            //Random
+    private ArrayList<Projectile> friendly;         //Friendly projectile
+    private ArrayList<Rock> hostile;                //Hostile rocks
+    private ArrayList<Rock> delHostile;             //Hostiles to be deleted from arraylist
+    private ArrayList<Projectile> delFriendly;      //Friendlies to be deleted from arraylist
 
-    private SpriteSheet smallRockSS;                //Spritesheet for small rocks
-    private SpriteSheet medRockSS;                  //Spritesheet for medium rocks
-    private SpriteSheet largeRockSS;                //Spritesheet for large rocks
+    //Tracks collisions to prevent repeated collisions on same objects
+    private HashMap<Mover, ArrayList<Rock>> collisions;   
 
-    private BufferedImage[] smallRocks;             //Image array passed to rock object for animation
-    private BufferedImage[] medRocks;               //Image array passed to rock object for animation
-    private BufferedImage[] largeRocks;             //Image array passed to rock object for animation
+    private Avatar player;                //Player avatar
+    private GamePanel gp;                 //Game Panel
+    private Random rand;                  //Random
 
-    private int tickCounter, spawnRate;             //Used to calculate rate of spawn/waves
-    private int[] rockValue;                        //Used in wave spawn and scoring
-    private double[] rockWeight;                    //Probabilistic weight of rock spawn
-    private int waveMaxValue, waveValue;            //Used to calculate length of enemy spawn wave
-    private double[] weightIncrements;              //Spawn wave difficulty increase at linear rate based on game difficulty
-    private int waveValueIncrement;                 //Spawn wave difficulty increase at linear rate based on game difficulty
-    private int difficulty;                         //Difficulty level
-    private int score;                              //Score
+    private SpriteSheet smallRockSS;      //Spritesheet for small rocks
+    private SpriteSheet medRockSS;        //Spritesheet for medium rocks
+    private SpriteSheet largeRockSS;      //Spritesheet for large rocks
+    private BufferedImage[] smallRocks;   //Image array passed to rock object for animation
+    private BufferedImage[] medRocks;     //Image array passed to rock object for animation
+    private BufferedImage[] largeRocks;   //Image array passed to rock object for animation
+
+    private int tickCounter, spawnRate;   //Used to calculate rate of spawn/waves
+    private int[] rockValue;              //Used in wave spawn and scoring
+    private double[] rockWeight;          //Probabilistic weight of rock spawn
+    private int waveMaxValue, waveValue;  //Used to calculate length of enemy spawn wave
+    private double[] weightIncrements;    //Spawn wave difficulty increase at linear rate based on game difficulty
+    private int waveValueIncrement;       //Spawn wave difficulty increase at linear rate based on game difficulty
+    private int difficulty;               //Difficulty level
+    private int score;                    //Score
 
     public ObjectManager(GamePanel gp) {
-        this.friendly = new ArrayList<Mover>();
-        this.hostile = new ArrayList<Mover>();
-        this.delHostile = new ArrayList<Mover>();
-        this.delFriendly = new ArrayList<Mover>();
-        this.scoreList = new ArrayList<>();
+        this.friendly = new ArrayList<Projectile>();
+        this.hostile = new ArrayList<Rock>();
+        this.delHostile = new ArrayList<Rock>();
+        this.delFriendly = new ArrayList<Projectile>();
+        this.collisions = new HashMap<Mover, ArrayList<Rock>>();
+
+        this.player = null;
         this.gp = gp;
         this.rand = new Random();
+
         this.tickCounter = 0;
         this.spawnRate = 0;
         this.rockValue = new int[]{1, 2, 5};
@@ -60,12 +66,17 @@ public class ObjectManager {
     }
 
     //Load images
-    public void init() {
+    public void init(Avatar player) {
         BufferedImageLoader loader = new BufferedImageLoader();
         BufferedImage small;
         BufferedImage medium;
         BufferedImage large;
 
+        //Get player and map it to collision hashmap
+        this.player = player;
+        this.collisions.put(player, new ArrayList<Rock>());
+
+        //Load SpriteSheets to be passed to rocks
         try {
             small = loader.load("res/SmallRocks.png");
             medium = loader.load("res/MedRocks.png");
@@ -133,26 +144,39 @@ public class ObjectManager {
             }
         }
 
-        //Check out of bounds
-        removeOOB();
-        
-        //Friendly object collision detection
-        for(Mover m : friendly) {
-            //Arraylist of all collisions this tick
-            ArrayList<Mover> collisions = new ArrayList<Mover>();
-            collisions.addAll(checkCollision(m));
+        //Player tick
+        player.tick();
 
-            if (!collisions.isEmpty()) {
-                delFriendly.add(m);
-                for(Mover h : collisions) {
-                    delHostile.add(h);
-                }
-                //TODO: explosion
-                if (m instanceof Avatar) {
-                    gp.gameover();
-                }
+        //Check out of bounds
+        checkOOB();
+        
+        checkCollision();
+
+
+        //Add to score based on rock size value
+        for (Rock r : delHostile) {
+            score += rockValue[r.getType()];
+        }
+
+        //Unmap projectiles to be deleted
+        for(Projectile p : delFriendly) {
+            collisions.remove(p);
+        }
+
+        //Unmap player mapped rocks to be deleted
+        for(Rock r : delHostile) {
+            if (collisions.get(player).contains(r)) {
+                collisions.get(player).remove(r);
             }
         }
+
+        //Remove OOB and collision objects from lists
+        friendly.removeAll(delFriendly);
+        hostile.removeAll(delHostile);
+
+        //Clear lists
+        delFriendly.clear();
+        delHostile.clear();
     }
 
     //Increase difficulty, start next wave
@@ -283,24 +307,104 @@ public class ObjectManager {
         }
     }
 
-    //Return array of entities in collision
-    private ArrayList<Mover> checkCollision(Mover mover) {
-        ArrayList<Mover> collision = new ArrayList<Mover>();
+    //Check collsion between friendly and hostile objects
+    private void checkCollision() {
 
-        for(Mover m : hostile) {
-            if (mover.getMask().intersects(m.getMask())) {
-                collision.add(m);
+        //Friendly object collision detection
+        for(Rock h : hostile) {
+
+            for(Projectile f : friendly) {
+                if (f.getMask().intersects(h.getMask())) {
+                    //Add arraylist to map if it does not already contain one
+                    collisions.computeIfAbsent(f, v -> new ArrayList<Rock>());
+                    
+                    //Check if projectile previously mapped rock
+                    if (!collisions.get(f).contains(h)) {
+
+                        //Map collision to prevent repeated collision on same objects
+                        collisions.get(f).add(h);
+
+                        calculateDamage(f, h);
+                        //TODO: Explosion
+                    }
+                }
+            }
+
+            if (player.getMask().intersects(h.getMask())) {
+
+                //Check if player previously mapped rock
+                if (!collisions.get(player).contains(h)) {
+
+                    //Map collision to prevent repeated collision on same objects
+                    collisions.get(player).add(h);
+
+                    calculateDamage(h);
+                }
             }
         }
-
-        return collision;
     }
 
-    //Remove all Movers out of bounds. Exclude spawn range.
-    private void removeOOB() {
+    //Calculate damage between projectiles and rocks
+    private void calculateDamage(Projectile f, Rock h) {
+        f.setHealth(f.getHealth() - h.getDamage());
+        h.setHealth(h.getHealth() - f.getDamage());
+
+        if (f.getHealth() <= 0) {
+            delFriendly.add(f);
+        }
+        if (h.getHealth() <= 0) {
+            delHostile.add(h);
+        }
+    }
+
+    //Calculate damage to player
+    private void calculateDamage(Rock h) {
+
+        //Check if no shield left
+        if (player.getShield() <= 0) {
+
+            //Adjust health value
+            player.setHealth(player.getHealth() - h.getDamage());
+
+        }
+        else {
+
+            //Shield animation
+            player.shieldAnim(true);
+
+            //Adjust shield value
+            player.setShield(player.getShield() - h.getDamage());
+
+            //If shield out, damage carries over
+            if (player.getShield() < 0) {
+                //Adjust health value
+                player.setHealth(player.getHealth() + player.getShield());
+                player.setShield(0);
+            }
+
+        }
+
+        //Rock damage
+        h.setHealth(h.getHealth() - player.getDamage());
+
+        //Rock death
+        if (h.getHealth() <= 0) {
+            //TODO: Explosion?
+            delHostile.add(h);
+        }
+
+        //Player death
+        if (player.getHealth() <= 0) {
+            //TODO: Bigger explosion?
+            gp.gameover();
+        }
+    }
+
+    //Check for movers out of bounds. Exclude spawn range.
+    private void checkOOB() {
         //Friendly
         for(int i = friendly.size() - 1; i >= 0; i--) {
-            Mover p = friendly.get(i);
+            Projectile p = friendly.get(i);
             p.tick();
 
             //Check bounds
@@ -314,7 +418,7 @@ public class ObjectManager {
 
         //Hostile
         for(int j = hostile.size() - 1; j >= 0; j--) {
-            Mover q = hostile.get(j);
+            Rock q = hostile.get(j);
             q.tick();
 
             //Check bounds. Allow for some hostile to spawn off screen
@@ -325,26 +429,6 @@ public class ObjectManager {
                 delHostile.add(q);
             }
         }
-
-        //Get all Rocks in Mover Arraylist in order to score them
-        scoreList.addAll(delHostile.stream()
-            .filter(element->element instanceof Rock)
-            .map(element->(Rock)element)
-            .collect(Collectors.toList()));
-
-        //Add to score based on rock size value
-        for (Rock r : scoreList) {
-            score += rockValue[r.getType()];
-        }
-
-        //Remove OOB and collision objects from lists
-        friendly.removeAll(delFriendly);
-        hostile.removeAll(delHostile);
-
-        //Clear lists
-        delFriendly.clear();
-        delHostile.clear();
-        scoreList.clear();
     }
 
     //Reset to initial values
@@ -353,6 +437,8 @@ public class ObjectManager {
         hostile.clear();
         delHostile.clear();
         delFriendly.clear();
+        collisions.clear();
+        collisions.put(player, new ArrayList<Rock>());
         tickCounter = 0;
         waveValue = 0;
         score = 0;
@@ -365,26 +451,27 @@ public class ObjectManager {
     }
 
     //Add or remove Movers from Arraylists
-    public void addHostile(Mover m) {
-        hostile.add(m);
+    public void addHostile(Rock r) {
+        hostile.add(r);
     }
-    public void removeHostile(Mover m) {
-        hostile.remove(m);
+    public void removeHostile(Rock r) {
+        hostile.remove(r);
     }
-    public void addFriendly(Mover m) {
-        friendly.add(m);
+    public void addFriendly(Projectile p) {
+        friendly.add(p);
     }
-    public void removeFriendly(Mover m) {
-        friendly.remove(m);
+    public void removeFriendly(Projectile p) {
+        friendly.remove(p);
     }
 
     //Paint
     public void paint(Graphics2D brush) {
-        for(Mover m : hostile) {
+        player.paint(brush);
+        for(Rock m : hostile) {
             m.paint(brush);
         }
-        for(Mover m : friendly) {
-            m.paint(brush);
+        for(Projectile p : friendly) {
+            p.paint(brush);
         }
     }
 }
