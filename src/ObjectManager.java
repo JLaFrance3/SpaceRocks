@@ -331,6 +331,7 @@ public class ObjectManager {
             }
 
             if (player.getMask().intersects(h.getMask())) {
+
                 //Check if player previously mapped rock
                 if (!collisions.get(player).contains(h)) {
 
@@ -368,7 +369,8 @@ public class ObjectManager {
         }
         else {
 
-            //TODO: shield animation
+            //Shield animation
+            player.shieldAnim(true);
 
             //Adjust shield value
             player.setShield(player.getShield() - h.getDamage());
@@ -436,6 +438,7 @@ public class ObjectManager {
         delHostile.clear();
         delFriendly.clear();
         collisions.clear();
+        collisions.put(player, new ArrayList<Rock>());
         tickCounter = 0;
         waveValue = 0;
         score = 0;

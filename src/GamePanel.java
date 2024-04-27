@@ -25,6 +25,7 @@ public class GamePanel extends JPanel{
     private BufferedImage background;           //Current background image
     private SpriteSheet ships;                  //Image containg all ships
     private SpriteSheet lasers;                 //Image containing all projectiles
+    private BufferedImage shieldSprite;         //Image used for player shield animation
     private Avatar player;                      //Player avatar
 
     private ObjectManager manager;
@@ -38,6 +39,7 @@ public class GamePanel extends JPanel{
         this.background = null;
         this.ships = null;
         this.lasers = null;
+        this.shieldSprite = null;
         this.player = null;
         this.manager = new ObjectManager(this);
     }
@@ -55,11 +57,12 @@ public class GamePanel extends JPanel{
             background = loader.load("res/BlueBackground1.png");
             shipSS = loader.load("res/ShipSheet.png");
             projectileSS = loader.load("res/ProjectileSheet.png");
+            shieldSprite = loader.load("res/Shield.png");
 
             ships = new SpriteSheet(shipSS, 59, 47);
             lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
 
-            player = new Avatar(ships, lasers, ships.getSprite(1, 1), this, input);
+            player = new Avatar(ships, lasers, shieldSprite, this, input);
         } 
         catch (IOException e) {
             e.printStackTrace();
