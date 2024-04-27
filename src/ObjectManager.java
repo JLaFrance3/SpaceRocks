@@ -122,7 +122,7 @@ public class ObjectManager {
                 tickCounter = 0;
 
                 //Random rock size determined by weighted values
-                for(double r = Math.random(); rockIndex < rockWeight.length - 1; rockIndex++) {
+                for(double r = Math.random(); rockIndex < rockWeight.length; rockIndex++) {
                     r -= rockWeight[rockIndex];
                     if (r <= 0) {
                         break;
@@ -208,7 +208,7 @@ public class ObjectManager {
                 waveValueIncrement = 50;
                 weightIncrements[2] = 0.002;
                 weightIncrements[1] = 0.004;
-                weightIncrements[0] = -weight[1]-weight[2];
+                weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
                 break;
             case 1:
                 //Medium
@@ -220,7 +220,7 @@ public class ObjectManager {
                 waveValueIncrement = 40;
                 weightIncrements[2] = 0.0015;
                 weightIncrements[1] = 0.003;
-                weightIncrements[0] = -weight[1]-weight[2];
+                weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
                 break;
             default:
                 //Easy
@@ -232,7 +232,7 @@ public class ObjectManager {
                 waveValueIncrement = 30;
                 weightIncrements[2] = 0.001;
                 weightIncrements[1] = 0.002;
-                weightIncrements[0] = -weight[1]-weight[2];
+                weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
                 break;
         }
 
