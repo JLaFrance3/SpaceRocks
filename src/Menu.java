@@ -47,6 +47,9 @@ public class Menu extends JPanel implements MouseListener{
     private JLabel scoreLabel;                  //Displays score at end of game
     private ButtonListener buttonListener;      //Upgrade button listener
     private JButton[] upgradeButtons;           //Buttons for upgrading ship stats
+    private JLabel[] upgradeCostLabels;         //Labels for listing costs of ship upggrades
+    private int[] upgradeCosts;                 //Costs of ship upgrades
+
 
     public Menu(GamePanel gPanel, ControlPanel cp) {
         //Initialize
@@ -61,6 +64,8 @@ public class Menu extends JPanel implements MouseListener{
         this.scoreLabel = new JLabel("SCORE: 0", SwingConstants.CENTER);
         this.buttonListener = new ButtonListener();
         this.upgradeButtons = new JButton[5];
+        this.upgradeCostLabels = new JLabel[5];
+        this.upgradeCosts = new int[5];
 
         //Score label settings
         scoreLabel.setBounds(100, 310, 194, 20);
@@ -69,6 +74,26 @@ public class Menu extends JPanel implements MouseListener{
         scoreLabel.setForeground(Color.BLACK);
         scoreLabel.setVisible(false);
         this.add(scoreLabel);
+
+        //Upgrade label settings
+        for (int j = 0; j < upgradeCostLabels.length; j++) {
+            upgradeCostLabels[j] = new JLabel();
+            upgradeCostLabels[j].setSize(100, 20);
+            upgradeCostLabels[j].setBackground(new Color(0, 0, 0, 0));
+            upgradeCostLabels[j].setFont(new Font("Symbol-Bold", Font.BOLD, 24));
+            upgradeCostLabels[j].setForeground(Color.WHITE);
+            upgradeCostLabels[j].setVisible(false);
+            this.add(upgradeCostLabels[j]);
+
+            //Set initial cost
+            upgradeCosts[j] = 500;
+            upgradeCostLabels[j].setText("" + upgradeCosts[j]);
+        }
+        upgradeCostLabels[0].setLocation(180, 120);
+        upgradeCostLabels[1].setLocation(180, 240);
+        upgradeCostLabels[2].setLocation(180, 360);
+        upgradeCostLabels[3].setLocation(180, 120);
+        upgradeCostLabels[4].setLocation(180, 240);
 
         //Menu screens bounds for changing size of panel
         menuBounds[0] = new Rectangle(200, 10, 394, 511);   //Pause menu
@@ -103,11 +128,11 @@ public class Menu extends JPanel implements MouseListener{
             upgradeButtons[i].setBorderPainted(false);
             this.add(upgradeButtons[i]);
         }
-        upgradeButtons[0].setBounds(285, 110, 30, 30);
-        upgradeButtons[1].setBounds(285, 230, 30, 30);
-        upgradeButtons[2].setBounds(285, 350, 30, 30);
-        upgradeButtons[3].setBounds(285, 110, 30, 30);
-        upgradeButtons[4].setBounds(285, 230, 30, 30);
+        upgradeButtons[0].setBounds(285, 120, 30, 30);
+        upgradeButtons[1].setBounds(285, 240, 30, 30);
+        upgradeButtons[2].setBounds(285, 360, 30, 30);
+        upgradeButtons[3].setBounds(285, 120, 30, 30);
+        upgradeButtons[4].setBounds(285, 240, 30, 30);
         
         //Panel preferences
         this.setLayout(null);
@@ -172,13 +197,54 @@ public class Menu extends JPanel implements MouseListener{
                 for(int i = 0; i < upgradeButtons.length; i++) upgradeButtons[i].setVisible(false);
             }
 
-            //Label visibility
+            //Score label visibility
             if (menuIndex == 7) {
                 scoreLabel.setVisible(true);
             }
             else {
                 scoreLabel.setVisible(false);
             }
+
+            //Upgrade label visibility
+            if (menuIndex == 2) {
+                for (int j = 0; j < 3; j++) upgradeCostLabels[j].setVisible(true);
+                upgradeCostLabels[3].setVisible(false);
+                upgradeCostLabels[4].setVisible(false);
+            }
+            else {
+                for (int j = 0; j < 3; j++) upgradeCostLabels[j].setVisible(false);
+
+                if (menuIndex == 3) {
+                    upgradeCostLabels[3].setVisible(true);
+                    upgradeCostLabels[4].setVisible(true);
+                }
+                else {
+                    upgradeCostLabels[3].setVisible(false);
+                    upgradeCostLabels[4].setVisible(false);
+                }
+            }
+        }
+    }
+
+    //Update upgrade cost for given index
+    private void updateUpgradeCost(int index) {
+        double numUpgrades;
+
+        //Reverse cost calculation to get current number of upgrades
+        numUpgrades = Math.log(upgradeCosts[index] / 500) / Math.log(2.0);
+
+        //Upgradecost = 500 * 2^(numUpgrades + 1)
+        upgradeCosts[index] = 500 * (int)Math.pow(2, numUpgrades + 1);
+
+        //Update label
+        upgradeCostLabels[index].setText("" + upgradeCosts[index]);
+    }
+
+    //Reset values to initial state
+    public void reset() {
+        for(int i = 0; i < upgradeCostLabels.length; i++) {
+            upgradeCosts[i] = 500;
+            upgradeCostLabels[i].setText("" + upgradeCosts[i]);
         }
     }
 
@@ -232,6 +298,7 @@ public class Menu extends JPanel implements MouseListener{
                 if (buttonMask[9].contains(e.getPoint())) {
                     cPanel.reset();
                     gPanel.reset();
+                    this.reset();
                     setState(STATE.MAIN);
                 }
                 break;
@@ -240,12 +307,14 @@ public class Menu extends JPanel implements MouseListener{
                 if (buttonMask[2].contains(e.getPoint())) {
                     cPanel.reset();
                     gPanel.reset();
+                    this.reset();
                     startGame();
                 }
                 else if (buttonMask[3].contains(e.getPoint())) {
                     //Main menu
                     cPanel.reset();
                     gPanel.reset();
+                    this.reset();
                     setState(STATE.MAIN);
                 }
                 else if (buttonMask[4].contains(e.getPoint())) {
@@ -303,21 +372,36 @@ public class Menu extends JPanel implements MouseListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == upgradeButtons[0]) {
-                gPanel.upgradeFireRate();
+                if (gPanel.getCrystals() >= upgradeCosts[0]) {
+                    gPanel.upgradeFireRate();
+                    updateUpgradeCost(0);
+                }
             }
             else if (e.getSource() == upgradeButtons[1]) {
-                gPanel.upgradeSpeed();
+                if (e.getSource() == upgradeButtons[1]) {
+                    gPanel.upgradeSpeed();
+                    updateUpgradeCost(1);
+                }
             }
             else if (e.getSource() == upgradeButtons[2]) {
-                gPanel.upgradeShield();
-                cPanel.updateStatusBars();
+                if (e.getSource() == upgradeButtons[2]) {
+                    gPanel.upgradeShield();
+                    cPanel.updateStatusBars();
+                    updateUpgradeCost(2);
+                }
             }
             else if (e.getSource() == upgradeButtons[3]) {
-                gPanel.upgradeHealth();
-                cPanel.updateStatusBars();
+                if (e.getSource() == upgradeButtons[3]) {
+                    gPanel.upgradeHealth();
+                    cPanel.updateStatusBars();
+                    updateUpgradeCost(3);
+                }
             }
             else if (e.getSource() == upgradeButtons[4]) {
-                gPanel.upgradeDamage();
+                if (e.getSource() == upgradeButtons[4]) {
+                    gPanel.upgradeDamage();
+                    updateUpgradeCost(4);
+                }
             }
         }
     }

@@ -4,12 +4,17 @@
  * Main panel of game used to paint player avatar and enemies
  */
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -27,12 +32,14 @@ public class GamePanel extends JPanel{
     private SpriteSheet lasers;                 //Image containing all projectiles
     private BufferedImage shieldSprite;         //Image used for player shield animation
     private Avatar player;                      //Player avatar
-
     private ObjectManager manager;              //Game manager
+    private SpriteSheet UI_SS;                  //Spritesheet of UI elements
+    private JLabel crystalIcon, crystalLabel;   //Used to display players reward amount
+    private int crystals;                       //Player reward crystal amount
 
     //Limit game speed variance
     private long lastTime;
-    private final double NS_TICK = 1000000000 / 30.0;
+    private final double NS_TICK = 1000000000 / 30.0; //30fps
     private double delta;
     private long nowTime;
 
@@ -48,10 +55,25 @@ public class GamePanel extends JPanel{
         this.shieldSprite = null;
         this.player = null;
         this.manager = new ObjectManager(this);
+        this.UI_SS = null;
+        this.crystalIcon = new JLabel();
+        this.crystalLabel = new JLabel();
+        this.crystals = 0;
 
         this.lastTime = System.nanoTime();
         this.delta = 0;
         this.nowTime = 0;
+
+        //Label settings
+        this.setLayout(null);
+        crystalIcon.setBounds(15, 15, 22, 35);
+        crystalIcon.setBackground(new Color(0, 0, 0, 0));
+        this.add(crystalIcon);
+        crystalLabel.setBounds(42, 22, 120, 16);
+        crystalLabel.setBackground(new Color(0, 0, 0, 0));
+        crystalLabel.setFont(new Font("Symbol-Bold", Font.BOLD, 14));
+        crystalLabel.setForeground(Color.WHITE);
+        this.add(crystalLabel);
     }
 
     //Initialize
@@ -59,6 +81,7 @@ public class GamePanel extends JPanel{
         BufferedImageLoader loader = new BufferedImageLoader();
         BufferedImage shipSS;
         BufferedImage projectileSS;
+        BufferedImage UI_Sheet;
 
         this.menu = menu;
         this.cp = cp;
@@ -68,9 +91,11 @@ public class GamePanel extends JPanel{
             shipSS = loader.load("res/ShipSheet.png");
             projectileSS = loader.load("res/ProjectileSheet.png");
             shieldSprite = loader.load("res/Shield.png");
+            UI_Sheet = loader.load("res/UISheet.png");
 
             ships = new SpriteSheet(shipSS, 59, 47);
             lasers = new SpriteSheet(projectileSS, 42, 68, 0, 90);
+            UI_SS = new SpriteSheet(UI_Sheet, 34, 54, 226, 60);
 
             player = new Avatar(ships, lasers, shieldSprite, this, input);
         } 
@@ -79,6 +104,9 @@ public class GamePanel extends JPanel{
         }
 
         manager.init(player);
+
+        Image labelIcon = UI_SS.getSprite(1, 1).getScaledInstance(22, 35, Image.SCALE_SMOOTH);
+        crystalIcon.setIcon(new ImageIcon((labelIcon)));
     }
 
     //Start game
@@ -98,6 +126,12 @@ public class GamePanel extends JPanel{
 
             delta--;
         }
+
+        //Update reward label for number of crystals
+        if (crystals > 0) {
+            crystalLabel.setText("" + crystals);
+        }
+
         repaint();
     }
 
@@ -151,6 +185,11 @@ public class GamePanel extends JPanel{
         player.checkShipUpgrade();
     }
 
+    //Add crystals
+    public void addCrystals(int c) {
+        this.crystals += c;
+    }
+
     //Get object manager
     public ObjectManager getObjectManager() {
         return manager;
@@ -179,6 +218,11 @@ public class GamePanel extends JPanel{
     //Get player maximum shield
     public double getPlayerMaxShield() {
         return player.getMaxShield();
+    }
+
+    //Get player crystals
+    public int getCrystals() {
+        return crystals;
     }
 
     //Timer stop
