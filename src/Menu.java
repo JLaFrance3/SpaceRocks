@@ -269,11 +269,12 @@ public class Menu extends JPanel implements MouseListener{
 
     //Update stat labels
     private void updateStats() {
-        statLabels[0].setText("Fire rate: " + gPanel.getPlayerFireRate());
-        statLabels[1].setText("Speed: " + gPanel.getPlayerSpeed());
-        statLabels[2].setText("Shield: " + gPanel.getPlayerShield() + "/" + gPanel.getPlayerMaxShield());
-        statLabels[3].setText("Health: " + gPanel.getPlayerHealth() + "/" + gPanel.getPlayerMaxHealth());
-        statLabels[4].setText("Damage: " + gPanel.getPlayerDamage());
+        statLabels[0].setText(String.format("Fire rate: %.2f", gPanel.getPlayerFireRate()));
+        statLabels[1].setText(String.format("Speed: %.0f", gPanel.getPlayerSpeed()));
+        statLabels[2].setText(String.format("Shield: %.0f/%.0f", gPanel.getPlayerShield(), gPanel.getPlayerMaxShield()));
+        statLabels[3].setText(String.format("Health: %.0f/%.0f", gPanel.getPlayerHealth(), gPanel.getPlayerMaxHealth()));
+        statLabels[4].setText(String.format((gPanel.getPlayerDamage() % 1 != 0) 
+            ? "Damage: %.2f" : "Damage: %.0f", gPanel.getPlayerDamage()));
     }
 
     //Reset values to initial state
