@@ -326,9 +326,6 @@ public class ObjectManager {
 
                         calculateDamage(f, h);
                         //TODO: Explosion
-
-                        //Get rewards
-                        gp.addCrystals(h.getDrop());
                     }
                 }
             }
@@ -357,6 +354,8 @@ public class ObjectManager {
         }
         if (h.getHealth() <= 0) {
             delHostile.add(h);
+            //Get rewards
+            gp.addCrystals(h.getDrop());
         }
     }
 

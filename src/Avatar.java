@@ -267,6 +267,7 @@ public class Avatar extends Ship{
 
                 lasers.setPointer(42, 68, 0, 90);
                 switch (upgradeCounter[4]) {
+                    case 1 -> setProjectileSprite(lasers.getSprite(2, 1));
                     case 2 -> setProjectileSprite(lasers.getSprite(2, 1));
                     case 3 -> setProjectileSprite(lasers.getSprite(3, 1));
                     case 4 -> setProjectileSprite(lasers.getSprite(4, 1));
