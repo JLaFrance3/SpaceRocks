@@ -49,6 +49,7 @@ public class Menu extends JPanel implements MouseListener{
     private JButton[] upgradeButtons;           //Buttons for upgrading ship stats
     private JLabel[] upgradeCostLabels;         //Labels for listing costs of ship upggrades
     private int[] upgradeCosts;                 //Costs of ship upgrades
+    private JLabel[] statLabels;                //Display stats on stat screen
 
 
     public Menu(GamePanel gPanel, ControlPanel cp) {
@@ -66,6 +67,7 @@ public class Menu extends JPanel implements MouseListener{
         this.upgradeButtons = new JButton[5];
         this.upgradeCostLabels = new JLabel[5];
         this.upgradeCosts = new int[5];
+        this.statLabels = new JLabel[5];
 
         //Score label settings
         scoreLabel.setBounds(100, 310, 194, 20);
@@ -94,6 +96,22 @@ public class Menu extends JPanel implements MouseListener{
         upgradeCostLabels[2].setLocation(180, 360);
         upgradeCostLabels[3].setLocation(180, 120);
         upgradeCostLabels[4].setLocation(180, 240);
+
+        //Stat label settings
+        for (int k = 0; k < statLabels.length; k++) {
+            statLabels[k] = new JLabel();
+            statLabels[k].setSize(160,20);
+            statLabels[k].setBackground(new Color(0, 0, 0, 0));
+            statLabels[k].setFont(new Font("Symbol-Bold", Font.BOLD, 16));
+            statLabels[k].setForeground(Color.WHITE);
+            statLabels[k].setVisible(false);
+            this.add(statLabels[k]);
+        }
+        statLabels[0].setLocation(100, 70);
+        statLabels[1].setLocation(100, 134);
+        statLabels[2].setLocation(100, 200);
+        statLabels[3].setLocation(100, 265);
+        statLabels[4].setLocation(100, 332);
 
         //Menu screens bounds for changing size of panel
         menuBounds[0] = new Rectangle(200, 10, 394, 511);   //Pause menu
@@ -223,6 +241,15 @@ public class Menu extends JPanel implements MouseListener{
                     upgradeCostLabels[4].setVisible(false);
                 }
             }
+
+            //Stat label visibility
+            if (menuIndex == 1) {
+                updateStats();
+                for (int k = 0; k < statLabels.length; k++) statLabels[k].setVisible(true);
+            }
+            else {
+                for (int k = 0; k < statLabels.length; k++) statLabels[k].setVisible(false);
+            }
         }
     }
 
@@ -238,6 +265,16 @@ public class Menu extends JPanel implements MouseListener{
 
         //Update label
         upgradeCostLabels[index].setText("" + upgradeCosts[index]);
+    }
+
+    //Update stat labels
+    private void updateStats() {
+        statLabels[0].setText(String.format("Fire rate: %.2f", gPanel.getPlayerFireRate()));
+        statLabels[1].setText(String.format("Speed: %.0f", gPanel.getPlayerSpeed()));
+        statLabels[2].setText(String.format("Shield: %.0f/%.0f", gPanel.getPlayerShield(), gPanel.getPlayerMaxShield()));
+        statLabels[3].setText(String.format("Health: %.0f/%.0f", gPanel.getPlayerHealth(), gPanel.getPlayerMaxHealth()));
+        statLabels[4].setText(String.format((gPanel.getPlayerDamage() % 1 != 0) 
+            ? "Damage: %.2f" : "Damage: %.0f", gPanel.getPlayerDamage()));
     }
 
     //Reset values to initial state
@@ -374,32 +411,37 @@ public class Menu extends JPanel implements MouseListener{
             if (e.getSource() == upgradeButtons[0]) {
                 if (gPanel.getCrystals() >= upgradeCosts[0]) {
                     gPanel.upgradeFireRate();
+                    gPanel.subtractCrystals(upgradeCosts[0]);
                     updateUpgradeCost(0);
                 }
             }
             else if (e.getSource() == upgradeButtons[1]) {
-                if (e.getSource() == upgradeButtons[1]) {
+                if (gPanel.getCrystals() >= upgradeCosts[1]) {
                     gPanel.upgradeSpeed();
+                    gPanel.subtractCrystals(upgradeCosts[1]);
                     updateUpgradeCost(1);
                 }
             }
             else if (e.getSource() == upgradeButtons[2]) {
-                if (e.getSource() == upgradeButtons[2]) {
+                if (gPanel.getCrystals() >= upgradeCosts[2]) {
                     gPanel.upgradeShield();
+                    gPanel.subtractCrystals(upgradeCosts[2]);
                     cPanel.updateStatusBars();
                     updateUpgradeCost(2);
                 }
             }
             else if (e.getSource() == upgradeButtons[3]) {
-                if (e.getSource() == upgradeButtons[3]) {
+                if (gPanel.getCrystals() >= upgradeCosts[3]) {
                     gPanel.upgradeHealth();
+                    gPanel.subtractCrystals(upgradeCosts[3]);
                     cPanel.updateStatusBars();
                     updateUpgradeCost(3);
                 }
             }
             else if (e.getSource() == upgradeButtons[4]) {
-                if (e.getSource() == upgradeButtons[4]) {
+                if (gPanel.getCrystals() >= upgradeCosts[4]) {
                     gPanel.upgradeDamage();
+                    gPanel.subtractCrystals(upgradeCosts[0]);
                     updateUpgradeCost(4);
                 }
             }

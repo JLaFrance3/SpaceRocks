@@ -190,6 +190,11 @@ public class GamePanel extends JPanel{
         this.crystals += c;
     }
 
+    //Subtract crystals
+    public void subtractCrystals(int c) {
+        this.crystals -= c;
+    }
+
     //Get object manager
     public ObjectManager getObjectManager() {
         return manager;
@@ -200,6 +205,16 @@ public class GamePanel extends JPanel{
         return manager.getScore();
     }
 
+    //Get current player shield
+    public double getPlayerFireRate() {
+        return player.getFireRate();
+    }
+
+    //Get current player speed
+    public double getPlayerSpeed() {
+        return player.getSpeed();
+    }
+
     //Get current player health
     public double getPlayerHealth() {
         return player.getHealth();
@@ -208,6 +223,11 @@ public class GamePanel extends JPanel{
     //Get current player shield
     public double getPlayerShield() {
         return player.getShield();
+    }
+
+    //Get current player daamge
+    public double getPlayerDamage() {
+        return player.getDamage();
     }
 
     //Get player maximum health
