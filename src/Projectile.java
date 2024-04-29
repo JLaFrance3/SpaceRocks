@@ -23,6 +23,13 @@ public class Projectile extends Mover{
         setSpeed(20);
 
         setDX(-getSpeed());
+
+        if(!isBeam) {
+            createMask(50, 40);
+        }
+        else {
+            createMask(50, 25);
+        }
     }
 
     @Override

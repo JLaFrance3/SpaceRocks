@@ -28,7 +28,13 @@ public class GamePanel extends JPanel{
     private BufferedImage shieldSprite;         //Image used for player shield animation
     private Avatar player;                      //Player avatar
 
-    private ObjectManager manager;
+    private ObjectManager manager;              //Game manager
+
+    //Limit game speed variance
+    private long lastTime;
+    private final double NS_TICK = 1000000000 / 30.0;
+    private double delta;
+    private long nowTime;
 
     public GamePanel(InputHolder input) {
         //Initialize variables
@@ -42,6 +48,10 @@ public class GamePanel extends JPanel{
         this.shieldSprite = null;
         this.player = null;
         this.manager = new ObjectManager(this);
+
+        this.lastTime = System.nanoTime();
+        this.delta = 0;
+        this.nowTime = 0;
     }
 
     //Initialize
@@ -78,9 +88,16 @@ public class GamePanel extends JPanel{
 
     //Game clock
     public void tick() {
-        manager.tick();
-        cp.tick();
+        nowTime = System.nanoTime();
+        delta += (nowTime - lastTime) / NS_TICK;
+        lastTime = nowTime;
 
+        if (delta >= 1) {
+            manager.tick();
+            cp.tick();
+
+            delta--;
+        }
         repaint();
     }
 

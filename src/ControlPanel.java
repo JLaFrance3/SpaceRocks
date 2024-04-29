@@ -185,7 +185,8 @@ public class ControlPanel extends JPanel{
         stickPos = HEIGHT / 2 - joystick.getHeight() / 2;
         scoreLabel.setText("SCORE: 0");
 
-        //TODO: Health/shield bars
+        healthBar.reset();
+        shieldBar.reset();
     }
 
     public void paintComponent(Graphics g) {

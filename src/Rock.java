@@ -48,10 +48,12 @@ public class Rock extends Mover {
             case 0:
                 setDamage(30);
                 setHealth(30);
+                createMask();
                 break;
             case 1:
                 setDamage(100);
                 setHealth(100);
+                createMask();
                 drop *= 2;
                 break;
             case 2:

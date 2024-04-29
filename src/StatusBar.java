@@ -63,6 +63,11 @@ public class StatusBar {
         totalValue = value;
     }
 
+    //Reset
+    public void reset() {
+        totalValue = 0;
+    }
+
     public void paint(Graphics g) {
         //Paint bar at x, y
         g.drawImage(bar, x, y, null);

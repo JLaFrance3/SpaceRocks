@@ -76,8 +76,6 @@ abstract class Mover {
         this.rotation = rotation;
         this.sprite = sprite;
         this.gp = gp;
-
-        createMask();
     }
 
     //Abstract methods
