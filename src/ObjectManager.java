@@ -318,7 +318,7 @@ public class ObjectManager {
                     //Add arraylist to map if it does not already contain one
                     collisions.computeIfAbsent(f, v -> new ArrayList<Rock>());
                     
-                    //Check if projectile previously mapped rock
+                    //Check if projectile not previously mapped rock
                     if (!collisions.get(f).contains(h)) {
 
                         //Map collision to prevent repeated collision on same objects
@@ -326,6 +326,9 @@ public class ObjectManager {
 
                         calculateDamage(f, h);
                         //TODO: Explosion
+
+                        //Get rewards
+                        gp.addCrystals(h.getDrop());
                     }
                 }
             }
