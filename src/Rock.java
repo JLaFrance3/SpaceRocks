@@ -51,14 +51,14 @@ public class Rock extends Mover {
                 createMask();
                 break;
             case 1:
-                setDamage(100);
-                setHealth(100);
+                setDamage(75);
+                setHealth(150);
                 createMask();
                 drop *= 2;
                 break;
             case 2:
-                setDamage(400);
-                setHealth(400);
+                setDamage(300);
+                setHealth(600);
                 drop *= 5;
 
                 //Needs a smaller mask
