@@ -203,9 +203,9 @@ public class ObjectManager {
                 weight[2] = 0.02;
                 weight[1] = 0.08;
                 weight[0] = 1.0 - weight[1] - weight[2];
-                spawnRate = 5;
+                spawnRate = 4;
                 waveMaxValue = 220;
-                waveValueIncrement = 50;
+                waveValueIncrement = 60;
                 weightIncrements[2] = 0.002;
                 weightIncrements[1] = 0.004;
                 weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
@@ -215,9 +215,9 @@ public class ObjectManager {
                 weight[2] = 0.01;
                 weight[1] = 0.07;
                 weight[0] = 1.0 - weight[1] - weight[2];
-                spawnRate = 10;
+                spawnRate = 8;
                 waveMaxValue = 160;
-                waveValueIncrement = 40;
+                waveValueIncrement = 50;
                 weightIncrements[2] = 0.0015;
                 weightIncrements[1] = 0.003;
                 weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];
@@ -227,9 +227,9 @@ public class ObjectManager {
                 weight[2] = 0.00;
                 weight[1] = 0.05;
                 weight[0] = 1.0 - weight[1] - weight[2];
-                spawnRate = 15;
+                spawnRate = 12;
                 waveMaxValue = 60;
-                waveValueIncrement = 30;
+                waveValueIncrement = 40;
                 weightIncrements[2] = 0.001;
                 weightIncrements[1] = 0.002;
                 weightIncrements[0] = -weightIncrements[1] - weightIncrements[2];

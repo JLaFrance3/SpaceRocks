@@ -441,7 +441,7 @@ public class Menu extends JPanel implements MouseListener{
             else if (e.getSource() == upgradeButtons[4]) {
                 if (gPanel.getCrystals() >= upgradeCosts[4]) {
                     gPanel.upgradeDamage();
-                    gPanel.subtractCrystals(upgradeCosts[0]);
+                    gPanel.subtractCrystals(upgradeCosts[4]);
                     updateUpgradeCost(4);
                 }
             }

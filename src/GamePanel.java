@@ -127,11 +127,6 @@ public class GamePanel extends JPanel{
             delta--;
         }
 
-        //Update reward label for number of crystals
-        if (crystals > 0) {
-            crystalLabel.setText("" + crystals);
-        }
-
         repaint();
     }
 
@@ -148,6 +143,8 @@ public class GamePanel extends JPanel{
         input.clear();
         player.reset();
         manager.reset();
+        crystals = 0;
+        crystalLabel.setText("");
 
         if (menu.getState() == Menu.STATE.MAIN) {
             pause();
@@ -188,11 +185,13 @@ public class GamePanel extends JPanel{
     //Add crystals
     public void addCrystals(int c) {
         this.crystals += c;
+        crystalLabel.setText("" + crystals);
     }
 
     //Subtract crystals
     public void subtractCrystals(int c) {
         this.crystals -= c;
+        crystalLabel.setText("" + crystals);
     }
 
     //Get object manager

@@ -178,22 +178,22 @@ public class Avatar extends Ship{
         switch (shipTier) {
             case 1:
                 //Tier 2 ships
-                if (upgradeCounter[0] + upgradeCounter[4] >= 2) {
+                if (upgradeCounter[0] + upgradeCounter[4] >= 6) {
                     setSprite(ships.getSprite(2, 1));
                     shipTier++;
                 }
-                else if (upgradeCounter[3] >= 2) {
+                else if (upgradeCounter[3] >= 3) {
                     setSprite(ships.getSprite(3, 1));
                     shipTier++;
                 }
-                else if (upgradeCounter[1] + upgradeCounter[2] >= 2) {
+                else if (upgradeCounter[1] + upgradeCounter[2] >= 6) {
                     setSprite(ships.getSprite(4, 1));
                     shipTier++;
                 }
                 break;
             case 2:
                 //Tier 3 ships
-                if (upgradeCounter[0] + upgradeCounter[4] >= 5) {
+                if (upgradeCounter[0] + upgradeCounter[4] >= 10) {
                     setSprite(ships.getSprite(5, 1));
                     shipTier++;
                 }
@@ -201,21 +201,21 @@ public class Avatar extends Ship{
                     setSprite(ships.getSprite(6, 1));
                     shipTier++;
                 }
-                else if (upgradeCounter[1] + upgradeCounter[2] >= 5) {
+                else if (upgradeCounter[1] + upgradeCounter[2] >= 10) {
                     setSprite(ships.getSprite(7, 1));
                     shipTier++;
                 }
                 break;
             case 3:
                 //Tier 4 ship
-                if (sum >= 12) {
+                if (sum >= 20) {
                     setSprite(ships.getSprite(8, 1));
                     shipTier++;
                 }
                 break;
             case 4:
                 //Tier 5 ship
-                if (sum >= 16) {
+                if (sum >= 26) {
                     setSprite(ships.getSprite(9, 1));
                     shipTier++;
 
